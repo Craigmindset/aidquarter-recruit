@@ -14,13 +14,13 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith("/dashboard");
-
+  const isLogin = pathname?.startsWith("/login");
   return (
     <body className="font-sans">
       {!isDashboard && <Header />}
       <main>{children}</main>
-      {!isDashboard && <Footer />}
-      <ChatBox />
+      {!isDashboard && !isLogin && <Footer />}
+      {!isLogin && <ChatBox />}
     </body>
   );
 }
