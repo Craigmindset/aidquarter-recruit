@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Counter from "@/components/counter";
 import {
   CheckCircle,
   Users,
@@ -21,12 +22,9 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                  Trusted by 700+ Families
-                </Badge>
                 <h1 className="text-4xl lg:text-6xl  font-extrabold md:font-bold text-gray-900 leading-tight tracking-tight">
                   Find Vetted Household Staff in
-                  <span className="text-green-600"> Minutes</span>
+                  <span className="text-red-600"> Minutes</span>
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed md:leading-relaxed text-balance">
                   Connect with our vetted professionals, housekeepers, nannies,
@@ -44,17 +42,23 @@ export default function HomePage() {
                 </Button>
               </div>
 
-              <div className="flex items-center gap-8 pt-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="text-sm text-gray-600">
+              <div className="flex items-center gap-2 md:gap-8 pt-4 flex-nowrap overflow-x-auto">
+                <div className="flex items-center gap-1 md:gap-2">
+                  <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-green-600 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
                     Background Verified
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="text-sm text-gray-600">
+                <div className="flex items-center gap-1 md:gap-2">
+                  <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-green-600 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
                     Reference Checked
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 md:gap-2">
+                  <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-green-600 flex-shrink-0" />
+                  <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
+                    Age 18+
                   </span>
                 </div>
               </div>
@@ -74,7 +78,10 @@ export default function HomePage() {
                     <Users className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">2,500+</p>
+                    {/* TODO: Connect to database to get actual count of verified workers */}
+                    <p className="font-semibold text-gray-900">
+                      <Counter start={100} end={347} duration={10000} />+
+                    </p>
                     <p className="text-sm text-gray-600">Verified Workers</p>
                   </div>
                 </div>
