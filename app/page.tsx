@@ -1,9 +1,16 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Users, Shield, Clock, Star, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  CheckCircle,
+  Users,
+  Shield,
+  Clock,
+  Star,
+  ArrowRight,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
@@ -14,19 +21,26 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Trusted by 500+ Families</Badge>
+                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                  Trusted by 700+ Families
+                </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
                   Find Vetted Household Staff in
                   <span className="text-green-600"> Minutes</span>
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  Connect with pre-screened, professional housekeepers, nannies, and drivers. Quality service
-                  recruitment made simple and secure.
+                  Connect with pre-screened, professional housekeepers, nannies,
+                  and drivers. Quality service recruitment made simple and
+                  secure.
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-3">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
+                >
                   <Link href="/find-aid">Find Aid Workers</Link>
                 </Button>
               </div>
@@ -34,11 +48,15 @@ export default function HomePage() {
               <div className="flex items-center gap-8 pt-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="text-sm text-gray-600">Background Verified</span>
+                  <span className="text-sm text-gray-600">
+                    Background Verified
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="text-sm text-gray-600">Reference Checked</span>
+                  <span className="text-sm text-gray-600">
+                    Reference Checked
+                  </span>
                 </div>
               </div>
             </div>
@@ -71,9 +89,12 @@ export default function HomePage() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Professional Household Services</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Professional Household Services
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We connect you with experienced, vetted professionals for all your household needs
+              We connect you with experienced, vetted professionals for all your
+              household needs
             </p>
           </div>
 
@@ -81,14 +102,24 @@ export default function HomePage() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardContent className="p-8 text-center">
                 <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Image src="/placeholder.svg?height=32&width=32" alt="Housekeeper" width={32} height={32} />
+                  <Image
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="Housekeeper"
+                    width={32}
+                    height={32}
+                  />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Housekeepers</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Housekeepers
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Professional cleaning and household management services from experienced staff
+                  Professional cleaning and household management services from
+                  experienced staff
                 </p>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href="/find-aid?service=housekeeper">Find Housekeepers</Link>
+                  <Link href="/find-aid?service=housekeeper">
+                    Find Housekeepers
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -96,11 +127,19 @@ export default function HomePage() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardContent className="p-8 text-center">
                 <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Image src="/placeholder.svg?height=32&width=32" alt="Nanny" width={32} height={32} />
+                  <Image
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="Nanny"
+                    width={32}
+                    height={32}
+                  />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Nannies</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Nannies
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Caring, qualified childcare professionals to support your family's needs
+                  Caring, qualified childcare professionals to support your
+                  family's needs
                 </p>
                 <Button asChild variant="outline" className="w-full">
                   <Link href="/find-aid?service=nanny">Find Nannies</Link>
@@ -111,11 +150,19 @@ export default function HomePage() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardContent className="p-8 text-center">
                 <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Image src="/placeholder.svg?height=32&width=32" alt="Driver" width={32} height={32} />
+                  <Image
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="Driver"
+                    width={32}
+                    height={32}
+                  />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Drivers</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Drivers
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Reliable, licensed drivers for personal and family transportation needs
+                  Reliable, licensed drivers for personal and family
+                  transportation needs
                 </p>
                 <Button asChild variant="outline" className="w-full">
                   <Link href="/find-aid?service=driver">Find Drivers</Link>
@@ -131,10 +178,13 @@ export default function HomePage() {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">Your Safety is Our Priority</h2>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                Your Safety is Our Priority
+              </h2>
               <p className="text-lg text-gray-600 mb-8">
-                Every worker on our platform goes through a comprehensive vetting process to ensure you get the highest
-                quality service with complete peace of mind.
+                Every worker on our platform goes through a comprehensive
+                vetting process to ensure you get the highest quality service
+                with complete peace of mind.
               </p>
 
               <div className="space-y-6">
@@ -143,8 +193,12 @@ export default function HomePage() {
                     <Shield className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Background Verification</h3>
-                    <p className="text-gray-600">Comprehensive background checks and identity verification</p>
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      Background Verification
+                    </h3>
+                    <p className="text-gray-600">
+                      Comprehensive background checks and identity verification
+                    </p>
                   </div>
                 </div>
 
@@ -153,8 +207,12 @@ export default function HomePage() {
                     <Star className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Reference Checks</h3>
-                    <p className="text-gray-600">Verified references from previous employers</p>
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      Reference Checks
+                    </h3>
+                    <p className="text-gray-600">
+                      Verified references from previous employers
+                    </p>
                   </div>
                 </div>
 
@@ -163,8 +221,12 @@ export default function HomePage() {
                     <Clock className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">24/7 Support</h3>
-                    <p className="text-gray-600">Round-the-clock customer support for any concerns</p>
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      24/7 Support
+                    </h3>
+                    <p className="text-gray-600">
+                      Round-the-clock customer support for any concerns
+                    </p>
                   </div>
                 </div>
               </div>
@@ -190,10 +252,15 @@ export default function HomePage() {
             Ready to Find Your Perfect Household Staff?
           </h2>
           <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of satisfied families who trust Aidquarters for their household staffing needs
+            Join thousands of satisfied families who trust Aidquarters for their
+            household staffing needs
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3">
+            <Button
+              asChild
+              size="lg"
+              className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3"
+            >
               <Link href="/find-aid">
                 Browse Workers <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
@@ -210,5 +277,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
