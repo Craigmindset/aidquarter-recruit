@@ -26,8 +26,8 @@ export default function HomePage() {
                   Find Vetted <br /> Household Staff in
                   <span className="text-red-600"> Minutes</span>
                 </h1>
-                <p className="text-lg md:text-lg text-gray-600 leading-relaxed md:leading-relaxed text-balance">
-                  onnect with our vetted professionals — trusted housekeepers,
+                <p className="text-m md:text-lg text-gray-600 leading-relaxed md:leading-normal text-justify md:text-start ">
+                  Connect with our vetted professionals; trusted housekeepers,
                   caring nannies, and reliable drivers. Enjoy a simple, secure
                   hiring process designed to give you peace of mind, save you
                   time, and guarantee quality service for your home and family.
