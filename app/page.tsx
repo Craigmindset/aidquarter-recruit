@@ -26,9 +26,11 @@ export default function HomePage() {
                   Find Vetted <br /> Household Staff in
                   <span className="text-red-600"> Minutes</span>
                 </h1>
-                <p className="text-lg md:text-xl text-gray-600 leading-relaxed md:leading-relaxed text-balance">
-                  Connect with our vetted professionals, housekeepers, nannies,
-                  and drivers. Simple, secure, and focused on quality.
+                <p className="text-lg md:text-lg text-gray-600 leading-relaxed md:leading-relaxed text-balance">
+                  onnect with our vetted professionals — trusted housekeepers,
+                  caring nannies, and reliable drivers. Enjoy a simple, secure
+                  hiring process designed to give you peace of mind, save you
+                  time, and guarantee quality service for your home and family.
                 </p>
               </div>
 
@@ -95,7 +97,7 @@ export default function HomePage() {
               <CardContent className="p-8 text-center">
                 <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Image
-                    src="/placeholder.svg?height=32&width=32"
+                    src="/sweeping.svg"
                     alt="Housekeeper"
                     width={32}
                     height={32}
@@ -119,12 +121,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardContent className="p-8 text-center">
                 <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Nanny"
-                    width={32}
-                    height={32}
-                  />
+                  <Image src="/baby.svg" alt="Nanny" width={32} height={32} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
                   Nannies
@@ -143,7 +140,7 @@ export default function HomePage() {
               <CardContent className="p-8 text-center">
                 <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Image
-                    src="/placeholder.svg?height=32&width=32"
+                    src="/steering.svg"
                     alt="Driver"
                     width={32}
                     height={32}
@@ -166,7 +163,7 @@ export default function HomePage() {
               <CardContent className="p-8 text-center">
                 <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Image
-                    src="/placeholder.svg?height=32&width=32"
+                    src="/nurse.svg"
                     alt="Care Giver"
                     width={32}
                     height={32}
