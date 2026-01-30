@@ -21,16 +21,25 @@ export default function ClientLayout({
 
   return (
     <body className="font-sans">
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="light"
-        disableTransitionOnChange
-      >
-        {!isDashboard && !isSignup && <Header />}
-        <main>{children}</main>
-        {!isDashboard && !isAuthPage && <Footer />}
-        {!isAuthPage && <ChatBox />}
-      </ThemeProvider>
+      {isDashboard ? (
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          disableTransitionOnChange
+        >
+          {!isDashboard && !isSignup && <Header />}
+          <main>{children}</main>
+          {!isDashboard && !isAuthPage && <Footer />}
+          {!isAuthPage && <ChatBox />}
+        </ThemeProvider>
+      ) : (
+        <>
+          {!isDashboard && !isSignup && <Header />}
+          <main>{children}</main>
+          {!isDashboard && !isAuthPage && <Footer />}
+          {!isAuthPage && <ChatBox />}
+        </>
+      )}
     </body>
   );
 }

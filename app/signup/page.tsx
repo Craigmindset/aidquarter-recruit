@@ -7,8 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Eye, EyeOff, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import bcrypt from "bcryptjs";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -17,12 +26,14 @@ export default function SignupPage() {
     lastName: "",
     phone: "",
     email: "",
+    state: "Lagos",
     password: "",
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Password validation criteria
   const passwordCriteria = {
@@ -46,6 +57,7 @@ export default function SignupPage() {
     formData.lastName.trim() !== "" &&
     formData.phone.length === 11 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
+    formData.state !== "" &&
     isPasswordValid &&
     doPasswordsMatch;
 
@@ -72,25 +84,61 @@ export default function SignupPage() {
     }
   };
 
+  const hashPassword = async (password: string): Promise<string> => {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isFormValid) return;
 
     setIsLoading(true);
+    setError("");
 
-    // Format phone number for backend with +234 prefix
-    const formattedData = {
-      ...formData,
-      phone: `+234${formData.phone}`,
-    };
+    try {
+      // Format phone number with +234 prefix
+      const formattedPhone = `+234${formData.phone}`;
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Submitting to backend:", formattedData);
-      // TODO: Replace with actual API call
+      // Hash password (in production, use proper bcrypt library)
+      const hashedPassword = await hashPassword(formData.password);
+
+      // Insert into client_profile table
+      const { data, error: supabaseError } = await supabase
+        .from("client_profile")
+        .insert({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formattedPhone,
+          state: formData.state,
+          password_hash: hashedPassword,
+          email_verified: false,
+        })
+        .select();
+
+      if (supabaseError) {
+        // Check for specific error types
+        if (supabaseError.message.includes("duplicate")) {
+          setError("This email is already registered. Please login instead.");
+        } else {
+          setError(
+            supabaseError.message || "Failed to create account. Please try again."
+          );
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // Success - redirect to dashboard
+      console.log("Account created successfully:", data);
       router.push("/dashboard");
-    }, 1500);
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError("An unexpected error occurred. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   const CriteriaItem = ({ met, text }: { met: boolean; text: string }) => (
@@ -120,6 +168,13 @@ export default function SignupPage() {
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={handleSubmit}>
+              {/* Error Alert */}
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md flex gap-2 items-start">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
               {/* First Name */}
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
@@ -128,7 +183,7 @@ export default function SignupPage() {
                   type="text"
                   placeholder="Enter your first name"
                   value={formData.firstName}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFormData({ ...formData, firstName: e.target.value })
                   }
                   required
@@ -143,7 +198,7 @@ export default function SignupPage() {
                   type="text"
                   placeholder="Enter your last name"
                   value={formData.lastName}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFormData({ ...formData, lastName: e.target.value })
                   }
                   required
@@ -183,7 +238,7 @@ export default function SignupPage() {
                   type="email"
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
                   required
@@ -194,6 +249,60 @@ export default function SignupPage() {
                       Please enter a valid email address
                     </p>
                   )}
+              </div>
+
+              {/* State */}
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Select
+                  value={formData.state}
+                  onValueChange={(value: string) =>
+                    setFormData({ ...formData, state: value })
+                  }
+                >
+                  <SelectTrigger id="state">
+                    <SelectValue placeholder="Select your state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Abia">Abia</SelectItem>
+                    <SelectItem value="Adamawa">Adamawa</SelectItem>
+                    <SelectItem value="Akwa Ibom">Akwa Ibom</SelectItem>
+                    <SelectItem value="Anambra">Anambra</SelectItem>
+                    <SelectItem value="Bauchi">Bauchi</SelectItem>
+                    <SelectItem value="Bayelsa">Bayelsa</SelectItem>
+                    <SelectItem value="Benue">Benue</SelectItem>
+                    <SelectItem value="Borno">Borno</SelectItem>
+                    <SelectItem value="Cross River">Cross River</SelectItem>
+                    <SelectItem value="Delta">Delta</SelectItem>
+                    <SelectItem value="Ebonyi">Ebonyi</SelectItem>
+                    <SelectItem value="Edo">Edo</SelectItem>
+                    <SelectItem value="Ekiti">Ekiti</SelectItem>
+                    <SelectItem value="Enugu">Enugu</SelectItem>
+                    <SelectItem value="FCT">FCT - Abuja</SelectItem>
+                    <SelectItem value="Gombe">Gombe</SelectItem>
+                    <SelectItem value="Imo">Imo</SelectItem>
+                    <SelectItem value="Jigawa">Jigawa</SelectItem>
+                    <SelectItem value="Kaduna">Kaduna</SelectItem>
+                    <SelectItem value="Kano">Kano</SelectItem>
+                    <SelectItem value="Katsina">Katsina</SelectItem>
+                    <SelectItem value="Kebbi">Kebbi</SelectItem>
+                    <SelectItem value="Kogi">Kogi</SelectItem>
+                    <SelectItem value="Kwara">Kwara</SelectItem>
+                    <SelectItem value="Lagos">Lagos</SelectItem>
+                    <SelectItem value="Nasarawa">Nasarawa</SelectItem>
+                    <SelectItem value="Niger">Niger</SelectItem>
+                    <SelectItem value="Ogun">Ogun</SelectItem>
+                    <SelectItem value="Ondo">Ondo</SelectItem>
+                    <SelectItem value="Osun">Osun</SelectItem>
+                    <SelectItem value="Oyo">Oyo</SelectItem>
+                    <SelectItem value="Plateau">Plateau</SelectItem>
+                    <SelectItem value="Rivers">Rivers</SelectItem>
+                    <SelectItem value="Sokoto">Sokoto</SelectItem>
+                    <SelectItem value="Taraba">Taraba</SelectItem>
+                    <SelectItem value="Yobe">Yobe</SelectItem>
+                    <SelectItem value="Zamfara">Zamfara</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Password */}

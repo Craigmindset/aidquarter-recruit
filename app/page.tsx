@@ -17,13 +17,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-50 to-blue-50 py-20 lg:py-15">
-        <div className="container mx-auto px-4 lg:px-6">
+      <section className="relative bg-gradient-to-br from-green-50 to-blue-50 py-19 pt-10 py-5 lg:py-19 ">
+        <div className="container mx-auto px-4 lg:px-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
                 <h1 className="text-4xl lg:text-6xl  font-extrabold md:font-bold text-gray-900 leading-tight tracking-tight">
-                  Find Vetted Household Staff in
+                  Find Vetted <br /> Household Staff in
                   <span className="text-red-600"> Minutes</span>
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed md:leading-relaxed text-balance">
@@ -66,26 +66,12 @@ export default function HomePage() {
 
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=500&width=600"
+                src="/aidquarter-hero.png"
                 alt="Professional household staff"
-                width={600}
+                width={500}
                 height={500}
-                className="rounded-2xl shadow-2xl"
+                className="rounded-2xl"
               />
-              <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
-                <div className="flex items-center gap-3">
-                  <div className="bg-green-100 p-2 rounded-full">
-                    <Users className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    {/* TODO: Connect to database to get actual count of verified workers */}
-                    <p className="font-semibold text-gray-900">
-                      <Counter start={100} end={347} duration={10000} />+
-                    </p>
-                    <p className="text-sm text-gray-600">Verified Workers</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
