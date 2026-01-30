@@ -101,7 +101,7 @@ export default function HomePage() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Professional Household Services
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -125,10 +125,14 @@ export default function HomePage() {
                   Housekeepers
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Professional cleaning and household management services from
-                  experienced staff
+                  Cleaning and household management services from experienced
+                  staff
                 </p>
-                <Button asChild variant="outline" className="w-full">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                >
                   <Link href="/find-aid?service=housekeeper">
                     Find Housekeepers
                   </Link>
@@ -148,7 +152,11 @@ export default function HomePage() {
                   Caring, qualified childcare professionals to support your
                   family's needs
                 </p>
-                <Button asChild variant="outline" className="w-full">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                >
                   <Link href="/find-aid?service=nanny">Find Nannies</Link>
                 </Button>
               </CardContent>
@@ -171,7 +179,11 @@ export default function HomePage() {
                   Reliable, licensed drivers for personal and family
                   transportation needs
                 </p>
-                <Button asChild variant="outline" className="w-full">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                >
                   <Link href="/find-aid?service=driver">Find Drivers</Link>
                 </Button>
               </CardContent>
@@ -194,7 +206,11 @@ export default function HomePage() {
                   Compassionate, professional care for elderly and patients with
                   dedicated support
                 </p>
-                <Button asChild variant="outline" className="w-full">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                >
                   <Link href="/find-aid?service=caregiver">
                     Find Care Giver
                   </Link>
