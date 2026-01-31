@@ -354,12 +354,12 @@ export default function FindAidPage() {
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="bg-white w-full mx-4 mb-4 rounded-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-white w-full mx-4 mb-4 mt-20 rounded-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b flex items-center justify-between p-4 rounded-t-2xl">
-              <h2 className="text-xl font-bold text-gray-900">
+            <div className="sticky top-0 bg-white border-b flex items-center justify-between p-3 rounded-t-2xl">
+              <h2 className="text-lg font-bold text-gray-900">
                 Worker Details
               </h2>
               <button
@@ -371,7 +371,7 @@ export default function FindAidPage() {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-4 space-y-3">
               {/* Worker Image */}
               <div className="relative">
                 <Image
@@ -379,7 +379,7 @@ export default function FindAidPage() {
                   alt={selectedWorker.name}
                   width={300}
                   height={300}
-                  className="w-full h-64 object-cover rounded-lg"
+                  className="w-full h-40 object-cover rounded-lg"
                 />
                 <Badge className="absolute top-4 right-4 bg-green-100 text-green-800 hover:bg-green-100 text-sm px-3 py-1">
                   {selectedWorker.status}
@@ -387,62 +387,62 @@ export default function FindAidPage() {
               </div>
 
               {/* Worker Info */}
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-0.5">
                     {selectedWorker.name}
                   </h3>
-                  <p className="text-lg text-green-600 font-medium">
+                  <p className="text-sm text-green-600 font-medium">
                     {selectedWorker.position}
                   </p>
                 </div>
 
                 {/* Salary Range */}
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-gray-600" />
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                  <DollarSign className="h-4 w-4 text-gray-600" />
                   <div>
-                    <p className="text-sm text-gray-600">Salary Range</p>
-                    <p className="text-lg font-semibold text-gray-900">
+                    <p className="text-xs text-gray-600">Salary Range</p>
+                    <p className="text-sm font-semibold text-gray-900">
                       {selectedWorker.salaryRange}
                     </p>
                   </div>
                 </div>
 
                 {/* Current Location */}
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                  <MapPin className="h-5 w-5 text-gray-600" />
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                  <MapPin className="h-4 w-4 text-gray-600" />
                   <div>
-                    <p className="text-sm text-gray-600">Current Location</p>
-                    <p className="text-lg font-semibold text-gray-900">
+                    <p className="text-xs text-gray-600">Current Location</p>
+                    <p className="text-sm font-semibold text-gray-900">
                       {selectedWorker.currentLocation}
                     </p>
                   </div>
                 </div>
 
                 {/* Preferred Work Location */}
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                  <MapPin className="h-5 w-5 text-gray-600" />
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                  <MapPin className="h-4 w-4 text-gray-600" />
                   <div>
-                    <p className="text-sm text-gray-600">Preferred Location</p>
-                    <p className="text-lg font-semibold text-gray-900">
+                    <p className="text-xs text-gray-600">Preferred Location</p>
+                    <p className="text-sm font-semibold text-gray-900">
                       {selectedWorker.preferredWorkLocation}
                     </p>
                   </div>
                 </div>
 
                 {/* Experience and Rating */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Experience</p>
-                    <p className="text-lg font-semibold text-gray-900">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-600">Experience</p>
+                    <p className="text-sm font-semibold text-gray-900">
                       {selectedWorker.experience}
                     </p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Rating</p>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-600">Rating</p>
                     <div className="flex items-center gap-1">
-                      <span className="text-yellow-500 text-lg">★</span>
-                      <p className="text-lg font-semibold text-gray-900">
+                      <span className="text-yellow-500 text-sm">★</span>
+                      <p className="text-sm font-semibold text-gray-900">
                         {selectedWorker.rating}
                       </p>
                     </div>
@@ -450,7 +450,7 @@ export default function FindAidPage() {
                 </div>
 
                 {/* Recruit Button */}
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 text-sm mt-2">
                   Recruit {selectedWorker.name.split(" ")[0]}
                 </Button>
               </div>
