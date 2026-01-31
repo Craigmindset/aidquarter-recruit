@@ -306,31 +306,31 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+          <div className="flex flex-nowrap justify-center items-center gap-4 md:gap-12 overflow-x-auto md:overflow-x-visible">
+            <div className="flex items-center justify-center p-2 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex-shrink-0">
               <Image
                 src="/sp-header-logo.webp"
                 alt="SP Header Logo"
-                width={120}
-                height={60}
+                width={100}
+                height={50}
                 className="object-contain"
               />
             </div>
-            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+            <div className="flex items-center justify-center p-2 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex-shrink-0">
               <Image
                 src="/Reliance-HMO-LOGO.jpg"
                 alt="Reliance HMO Logo"
-                width={120}
-                height={60}
+                width={100}
+                height={50}
                 className="object-contain"
               />
             </div>
-            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+            <div className="flex items-center justify-center p-2 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex-shrink-0">
               <Image
                 src="/download.png"
                 alt="Download Logo"
-                width={120}
-                height={60}
+                width={100}
+                height={50}
                 className="object-contain"
               />
             </div>
