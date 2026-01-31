@@ -112,6 +112,10 @@ export default function FindAidPage() {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [positionDropdownOpen, setPositionDropdownOpen] = useState(false);
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState<
+    (typeof aidWorkers)[0] | null
+  >(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Extract unique positions and states
   const positions = Array.from(new Set(aidWorkers.map((w) => w.position)));
@@ -263,7 +267,13 @@ export default function FindAidPage() {
               filteredWorkers.map((worker) => (
                 <Card
                   key={worker.id}
-                  className="hover:shadow-lg transition-shadow duration-300 h-full flex flex-col"
+                  onClick={() => {
+                    if (window.innerWidth < 768) {
+                      setSelectedWorker(worker);
+                      setIsModalOpen(true);
+                    }
+                  }}
+                  className="hover:shadow-lg transition-shadow duration-300 h-full flex flex-col md:cursor-default md:pointer-events-none md:hover:cursor-default cursor-pointer"
                 >
                   <CardContent className="p-6 flex flex-col flex-grow">
                     {/* Worker Image */}
@@ -275,7 +285,7 @@ export default function FindAidPage() {
                         height={200}
                         className="w-full h-32 md:h-48 object-cover rounded-lg"
                       />
-                      <Badge className="absolute top-2 right-2 bg-green-100 text-green-800 hover:bg-green-100">
+                      <Badge className="absolute top-2 right-2 bg-green-100 text-green-800 hover:bg-green-100 text-[10px] md:text-sm px-1 md:px-3 py-0 md:py-1 whitespace-nowrap">
                         {worker.status}
                       </Badge>
                     </div>
@@ -283,7 +293,7 @@ export default function FindAidPage() {
                     {/* Worker Info */}
                     <div className="space-y-3 flex-grow">
                       <div>
-                        <h3 className="font-semibold text-sm md:text-lg text-gray-900 break-words">
+                        <h3 className="font-semibold text-sm md:text-lg text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
                           {worker.name}
                         </h3>
                         <p className="text-green-600 font-medium text-sm">
@@ -336,6 +346,118 @@ export default function FindAidPage() {
           </div>
         </div>
       </section>
+
+      {/* Worker Detail Modal - Mobile Only */}
+      {isModalOpen && selectedWorker && (
+        <div
+          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="bg-white w-full mx-4 mb-4 rounded-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b flex items-center justify-between p-4 rounded-t-2xl">
+              <h2 className="text-xl font-bold text-gray-900">
+                Worker Details
+              </h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Worker Image */}
+              <div className="relative">
+                <Image
+                  src={selectedWorker.image || "/placeholder.svg"}
+                  alt={selectedWorker.name}
+                  width={300}
+                  height={300}
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+                <Badge className="absolute top-4 right-4 bg-green-100 text-green-800 hover:bg-green-100 text-sm px-3 py-1">
+                  {selectedWorker.status}
+                </Badge>
+              </div>
+
+              {/* Worker Info */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                    {selectedWorker.name}
+                  </h3>
+                  <p className="text-lg text-green-600 font-medium">
+                    {selectedWorker.position}
+                  </p>
+                </div>
+
+                {/* Salary Range */}
+                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">Salary Range</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {selectedWorker.salaryRange}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Current Location */}
+                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                  <MapPin className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">Current Location</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {selectedWorker.currentLocation}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Preferred Work Location */}
+                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                  <MapPin className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">Preferred Location</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {selectedWorker.preferredWorkLocation}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Experience and Rating */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-600">Experience</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {selectedWorker.experience}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-600">Rating</p>
+                    <div className="flex items-center gap-1">
+                      <span className="text-yellow-500 text-lg">★</span>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {selectedWorker.rating}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recruit Button */}
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg">
+                  Recruit {selectedWorker.name.split(" ")[0]}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
