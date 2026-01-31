@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Counter from "@/components/counter";
 import {
   CheckCircle,
@@ -90,7 +89,7 @@ export default function HomePage() {
                 alt="Professional household staff"
                 width={500}
                 height={500}
-                className="rounded-2xl md: ml-10"
+                className="rounded-2xl md:ml-10 w-full max-w-sm md:max-w-none"
               />
             </div>
           </div>
@@ -287,7 +286,7 @@ export default function HomePage() {
                 alt="Safety and trust"
                 width={450}
                 height={400}
-                className="rounded-2xl shadow-xl ml-10"
+                className="rounded-2xl shadow-xl mx-auto  w-full max-w-sm md:max-w-md"
               />
             </div>
           </div>

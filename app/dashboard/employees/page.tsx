@@ -111,14 +111,6 @@ export default function EmployeesPage() {
 
   const confirmFireEmployee = () => {
     // Handle firing logic here
-    console.log(
-      "Firing employee:",
-      selectedEmployee?.firstName,
-      "Reason:",
-      fireReason,
-      "Details:",
-      fireDetails
-    );
     setShowFireDialog(false);
     setSelectedEmployee(null);
     setFireReason("");
@@ -394,7 +386,7 @@ export default function EmployeesPage() {
                       <span className="dark:text-gray-300">
                         Started:{" "}
                         {new Date(
-                          selectedEmployee.dateOfEmployment
+                          selectedEmployee.dateOfEmployment,
                         ).toLocaleDateString()}
                       </span>
                     </div>
@@ -437,7 +429,7 @@ export default function EmployeesPage() {
                       >
                         {name}
                       </p>
-                    )
+                    ),
                   )}
                   <div className="flex items-start gap-3">
                     <MapPin className="h-4 w-4 text-gray-400 dark:text-gray-500 mt-1" />

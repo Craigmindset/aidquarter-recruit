@@ -20,7 +20,7 @@ export default function ClientLayout({
   const isAuthPage = isLogin || isSignup;
 
   return (
-    <body className="font-sans">
+    <body className="font-sans overflow-x-hidden pt-16 md:pt-0">
       {isDashboard ? (
         <ThemeProvider
           attribute="class"

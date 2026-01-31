@@ -99,7 +99,6 @@ export default function WalletPage() {
 
   const handleTopUp = () => {
     // Handle top-up logic here
-    console.log("Topping up:", topUpAmount);
     setShowTopUpDialog(false);
     setTopUpAmount("");
   };

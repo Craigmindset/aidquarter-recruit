@@ -41,7 +41,7 @@ export default function SignupPage() {
     hasLowerCase: /[a-z]/.test(formData.password),
     hasNumber: /[0-9]/.test(formData.password),
     hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
-      formData.password
+      formData.password,
     ),
     isValidLength:
       formData.password.length >= 8 && formData.password.length <= 15,
@@ -76,7 +76,7 @@ export default function SignupPage() {
   };
 
   const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = e.target.value;
     if (value.length <= 15) {
@@ -124,7 +124,8 @@ export default function SignupPage() {
           setError("This email is already registered. Please login instead.");
         } else {
           setError(
-            supabaseError.message || "Failed to create account. Please try again."
+            supabaseError.message ||
+              "Failed to create account. Please try again.",
           );
         }
         setIsLoading(false);
@@ -132,10 +133,8 @@ export default function SignupPage() {
       }
 
       // Success - redirect to dashboard
-      console.log("Account created successfully:", data);
       router.push("/dashboard");
     } catch (err) {
-      console.error("Signup error:", err);
       setError("An unexpected error occurred. Please try again.");
       setIsLoading(false);
     }
