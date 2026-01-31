@@ -303,7 +303,9 @@ export default function FindAidPage() {
 
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <MapPin className="h-4 w-4" />
-                        <span>{worker.currentLocation}</span>
+                        <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+                          {worker.currentLocation}
+                        </span>
                       </div>
 
                       <div className="hidden md:flex items-center gap-2 text-sm text-gray-600">
