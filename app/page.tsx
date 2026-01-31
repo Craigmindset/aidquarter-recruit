@@ -90,7 +90,7 @@ export default function HomePage() {
                 alt="Professional household staff"
                 width={500}
                 height={500}
-                className="rounded-2xl"
+                className="rounded-2xl md: ml-10"
               />
             </div>
           </div>
@@ -223,10 +223,10 @@ export default function HomePage() {
 
       {/* Trust & Safety Section */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4 lg:px-6">
+        <div className="container mx-auto px-4 lg:px-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
                 Your Safety is Our Priority
               </h2>
               <p className="text-lg text-gray-600 mb-8">
@@ -259,7 +259,7 @@ export default function HomePage() {
                       Reference Checks
                     </h3>
                     <p className="text-gray-600">
-                      Verified references from previous employers
+                      Verified references from guarantors.
                     </p>
                   </div>
                 </div>
@@ -270,10 +270,11 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">
-                      24/7 Support
+                      Dedicated Management Dashboard
                     </h3>
                     <p className="text-gray-600">
-                      Round-the-clock customer support for any concerns
+                      Manage all staff in one place with our user-friendly
+                      dashboard.
                     </p>
                   </div>
                 </div>
@@ -282,11 +283,56 @@ export default function HomePage() {
 
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=400&width=500"
+                src="/aid-verify.png"
                 alt="Safety and trust"
-                width={500}
+                width={450}
                 height={400}
-                className="rounded-2xl shadow-xl"
+                className="rounded-2xl shadow-xl ml-10"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partners Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="text-center mb-5">
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+              Trusted Partners
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              We partner with leading organizations to provide you with the best
+              household staffing solutions
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+              <Image
+                src="/sp-header-logo.webp"
+                alt="SP Header Logo"
+                width={120}
+                height={60}
+                className="object-contain"
+              />
+            </div>
+            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+              <Image
+                src="/Reliance-HMO-LOGO.jpg"
+                alt="Reliance HMO Logo"
+                width={120}
+                height={60}
+                className="object-contain"
+              />
+            </div>
+            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+              <Image
+                src="/download.png"
+                alt="Download Logo"
+                width={120}
+                height={60}
+                className="object-contain"
               />
             </div>
           </div>

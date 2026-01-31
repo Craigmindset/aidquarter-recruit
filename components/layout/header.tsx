@@ -44,12 +44,7 @@ export function Header() {
               >
                 Home
               </Link>
-              <Link
-                href="/services"
-                className="text-gray-700 hover:text-green-600 font-medium"
-              >
-                Services
-              </Link>
+
               <Link
                 href="/why-aidquarters"
                 className="text-gray-700 hover:text-green-600 font-medium"
