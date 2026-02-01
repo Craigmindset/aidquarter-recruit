@@ -87,9 +87,9 @@ export default function HomePage() {
               <Image
                 src="/aidquarter-hero.png"
                 alt="Professional household staff"
-                width={500}
-                height={500}
-                className="rounded-2xl md:ml-10 w-full max-w-sm md:max-w-none"
+                width={400}
+                height={400}
+                className="rounded-2xl md:ml-10 w-full max-w-sm md:max-w-none md:mt-10"
               />
             </div>
           </div>
