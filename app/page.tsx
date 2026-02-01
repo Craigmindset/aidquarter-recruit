@@ -103,7 +103,7 @@ export default function HomePage() {
             <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Professional Household Services
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className=" text-gray-600 max-w-3xl mx-auto">
               We connect you with experienced, vetted professionals for all your
               household needs
             </p>
@@ -228,7 +228,7 @@ export default function HomePage() {
               <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
                 Your Safety is Our Priority
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className=" text-gray-600 mb-8">
                 Every worker on our platform goes through a comprehensive
                 vetting process to ensure you get the highest quality service
                 with complete peace of mind.
