@@ -316,7 +316,7 @@ export default function HomePage() {
                 className="object-contain"
               />
             </div>
-            <div className="flex items-center justify-center p-2 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex-shrink-0">
+            {/*<div className="flex items-center justify-center p-2 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex-shrink-0">
               <Image
                 src="/Reliance-HMO-LOGO.jpg"
                 alt="Reliance HMO Logo"
@@ -324,7 +324,7 @@ export default function HomePage() {
                 height={50}
                 className="object-contain"
               />
-            </div>
+            </div> */}
             <div className="flex items-center justify-center p-2 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 flex-shrink-0">
               <Image
                 src="/download.png"
@@ -341,7 +341,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-20 bg-green-600">
         <div className="container mx-auto px-4 lg:px-6 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+          <h2 className="text-2xl lg:text-4xl font-bold text-white mb-6">
             Ready to Find Your Perfect Household Staff?
           </h2>
           <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
@@ -362,7 +362,7 @@ export default function HomePage() {
               asChild
               variant="outline"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-green-600 px-8 py-3"
+              className="border-white text-green-600 hover:bg-white hover:text-red-600 px-8 py-3"
             >
               <Link href="/why-aidquarters">Learn More</Link>
             </Button>
