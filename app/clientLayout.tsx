@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import ChatBox from "@/components/chatbox";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 
 export default function ClientLayout({
@@ -21,25 +22,27 @@ export default function ClientLayout({
 
   return (
     <body className="font-sans overflow-x-hidden pt-16 md:pt-0">
-      {isDashboard ? (
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
-          {!isDashboard && !isSignup && <Header />}
-          <main>{children}</main>
-          {!isDashboard && !isAuthPage && <Footer />}
-          {!isAuthPage && <ChatBox />}
-        </ThemeProvider>
-      ) : (
-        <>
-          {!isDashboard && !isSignup && <Header />}
-          <main>{children}</main>
-          {!isDashboard && !isAuthPage && <Footer />}
-          {!isAuthPage && <ChatBox />}
-        </>
-      )}
+      <AuthProvider>
+        {isDashboard ? (
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            disableTransitionOnChange
+          >
+            {!isDashboard && !isSignup && <Header />}
+            <main>{children}</main>
+            {!isDashboard && !isAuthPage && <Footer />}
+            {!isAuthPage && <ChatBox />}
+          </ThemeProvider>
+        ) : (
+          <>
+            {!isDashboard && !isSignup && <Header />}
+            <main>{children}</main>
+            {!isDashboard && !isAuthPage && <Footer />}
+            {!isAuthPage && <ChatBox />}
+          </>
+        )}
+      </AuthProvider>
     </body>
   );
 }

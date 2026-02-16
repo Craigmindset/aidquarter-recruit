@@ -7,17 +7,27 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, LogOut, LogIn, UserPlus } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith("/dashboard");
+  const { user, signOut } = useAuth();
 
-  const handleLogout = () => {
-    // In a real app, you would clear authentication tokens/session here
-    // For now, we'll just redirect to login
-    router.push("/login");
+  const handleLogout = async () => {
+    await signOut();
+  };
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      router.push("/");
+    }
+    setIsMenuOpen(false);
   };
 
   return (
@@ -26,7 +36,13 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
-            href={isDashboard ? "/dashboard" : "/"}
+            href={
+              user && !isDashboard
+                ? "/dashboard"
+                : isDashboard
+                  ? "/dashboard"
+                  : "/"
+            }
             className="flex items-center space-x-2"
           >
             <div className="bg-green-600 text-white p-2 rounded-lg">
@@ -39,7 +55,7 @@ export function Header() {
           {!isDashboard && (
             <nav className="hidden md:flex items-center space-x-8">
               <Link
-                href="/"
+                href={user ? "/dashboard" : "/"}
                 className="text-gray-700 hover:text-green-600 font-medium"
               >
                 Home
@@ -70,47 +86,23 @@ export function Header() {
           {isDashboard && (
             <nav className="hidden md:flex items-center space-x-8">
               <Link
-                href="/dashboard"
+                href="/"
                 className="text-gray-700 hover:text-green-600 font-medium"
               >
-                Overview
+                Home
               </Link>
               <Link
-                href="/dashboard/recruitment"
+                href="/dashboard/support"
                 className="text-gray-700 hover:text-green-600 font-medium"
               >
-                Recruitment
-              </Link>
-              <Link
-                href="/dashboard/payroll"
-                className="text-gray-700 hover:text-green-600 font-medium"
-              >
-                Payroll
-              </Link>
-              <Link
-                href="/dashboard/employees"
-                className="text-gray-700 hover:text-green-600 font-medium"
-              >
-                Employees
-              </Link>
-              <Link
-                href="/dashboard/wallet"
-                className="text-gray-700 hover:text-green-600 font-medium"
-              >
-                Wallet
-              </Link>
-              <Link
-                href="/find-aid"
-                className="text-gray-700 hover:text-green-600 font-medium"
-              >
-                Find Aid
+                Support
               </Link>
             </nav>
           )}
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            {isDashboard ? (
+            {isDashboard || user ? (
               <>
                 <ThemeToggle />
                 <Button
@@ -158,7 +150,7 @@ export function Header() {
                   {!isDashboard ? (
                     <>
                       <Link
-                        href="/"
+                        href={user ? "/dashboard" : "/"}
                         className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -243,7 +235,7 @@ export function Header() {
 
                 {/* Auth Buttons at bottom */}
                 <div className="border-t pt-4 mt-4">
-                  {isDashboard ? (
+                  {isDashboard || user ? (
                     <Button
                       onClick={() => {
                         handleLogout();
