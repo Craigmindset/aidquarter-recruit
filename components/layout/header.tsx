@@ -77,7 +77,7 @@ export function Header() {
                 href="/find-aid"
                 className="text-gray-700 hover:text-green-600 font-medium"
               >
-                Find Aid
+                Recruitment
               </Link>
             </nav>
           )}
@@ -118,8 +118,8 @@ export function Header() {
               <>
                 <Button asChild className="bg-green-600 hover:bg-green-700">
                   <Link href="/login">
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Login / Sign Up
+                    <LogIn className="h-4 w-4 mr-2" />
+                    Login
                   </Link>
                 </Button>
               </>
@@ -182,7 +182,7 @@ export function Header() {
                         className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Find Aid
+                        Recruitment
                       </Link>
                     </>
                   ) : (
@@ -227,7 +227,7 @@ export function Header() {
                         className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Find Aid
+                        Recruitment
                       </Link>
                     </>
                   )}

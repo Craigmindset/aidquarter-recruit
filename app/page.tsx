@@ -41,7 +41,7 @@ export default function HomePage() {
               <div className="space-y-4">
                 <h1 className="text-4xl lg:text-5xl  font-extrabold md:font-bold text-gray-900 leading-tight tracking-tight">
                   Join Our Team <br />
-                  of Vetted Professionals
+                  of Vetted Professionals <br />
                   <span className="text-red-600"> In Minutes</span>
                 </h1>
                 <p className="text-m md:text-lg text-gray-600 leading-relaxed md:leading-normal text-justify md:text-start ">
@@ -130,12 +130,9 @@ export default function HomePage() {
                 </p>
                 <Button
                   asChild
-                  variant="outline"
-                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                  className="w-full bg-green-600 hover:bg-green-700 active:opacity-75 active:scale-95 transition-all duration-150 text-white"
                 >
-                  <Link href="/find-aid?service=housekeeper">
-                    Find Housekeepers
-                  </Link>
+                  <Link href="/signup/info?role=housekeeper">Register</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -154,10 +151,9 @@ export default function HomePage() {
                 </p>
                 <Button
                   asChild
-                  variant="outline"
-                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                  className="w-full bg-green-600 hover:bg-green-700 active:opacity-75 active:scale-95 transition-all duration-150 text-white"
                 >
-                  <Link href="/find-aid?service=nanny">Find Nannies</Link>
+                  <Link href="/signup/info?role=nanny">Register</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -181,10 +177,9 @@ export default function HomePage() {
                 </p>
                 <Button
                   asChild
-                  variant="outline"
-                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                  className="w-full bg-green-600 hover:bg-green-700 active:opacity-75 active:scale-95 transition-all duration-150 text-white"
                 >
-                  <Link href="/find-aid?service=driver">Find Drivers</Link>
+                  <Link href="/signup/info?role=driver">Register</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -208,12 +203,9 @@ export default function HomePage() {
                 </p>
                 <Button
                   asChild
-                  variant="outline"
-                  className="w-full active:opacity-75 active:scale-95 transition-all duration-150"
+                  className="w-full bg-green-600 hover:bg-green-700 active:opacity-75 active:scale-95 transition-all duration-150 text-white"
                 >
-                  <Link href="/find-aid?service=caregiver">
-                    Find Care Giver
-                  </Link>
+                  <Link href="/signup/info?role=caregiver">Register</Link>
                 </Button>
               </CardContent>
             </Card>
