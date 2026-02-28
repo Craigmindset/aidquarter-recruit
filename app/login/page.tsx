@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,24 +11,80 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
+  const search = useSearchParams();
+  const nextPath = search.get("next");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
+    setInfo("");
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword(
+        { email, password }
+      );
+      if (authError) {
+        setError(authError.message || "Unable to sign in");
+        setIsLoading(false);
+        return;
+      }
+      if (data?.session) {
+        try {
+          await fetch("/api/auth/set-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              access_token: data.session.access_token,
+              refresh_token: data.session.refresh_token,
+            }),
+          });
+        } catch {
+          // proceed even if cookie sync fails; middleware may still allow after client nav
+        }
+        if (nextPath && nextPath.startsWith("/")) {
+          router.replace(nextPath);
+        } else {
+          router.push("/dashboard");
+        }
+      } else {
+        setError("No active session found");
+        setIsLoading(false);
+      }
+    } catch {
+      setError("Unexpected error occurred");
+      setIsLoading(false);
+    }
+  };
 
-    // Simulate login process
-    setTimeout(() => {
-      // In a real app, you would validate credentials here
-      // For now, we'll just redirect to dashboard
-      router.push("/dashboard");
-    }, 1000);
+  const handleResend = async () => {
+    setIsLoading(true);
+    setError("");
+    setInfo("");
+    try {
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+      if (resendError) {
+        setError(resendError.message || "Unable to resend confirmation");
+      } else {
+        setInfo("Confirmation email sent. Check your inbox.");
+      }
+    } catch {
+      setError("Unexpected error while resending confirmation");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,6 +99,10 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <form className="space-y-4" onSubmit={handleSubmit}>
+              {error && (
+                <p className="text-sm text-red-600">{error}</p>
+              )}
+              {info && <p className="text-sm text-green-600">{info}</p>}
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
@@ -63,13 +123,9 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => {
-                      if (e.target.value.length <= 15) {
-                        setPassword(e.target.value);
-                      }
-                    }}
-                    minLength={8}
-                    maxLength={15}
+                    onChange={(e) => setPassword(e.target.value)}
+                    minLength={6}
+                    maxLength={22}
                     required
                     className="pr-10"
                   />
@@ -85,9 +141,9 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
-                {password && password.length < 8 && (
+                {password && password.length < 6 && (
                   <p className="text-xs text-red-600">
-                    Password must be at least 8 characters
+                    Password must be at least 6 characters
                   </p>
                 )}
               </div>
@@ -125,9 +181,21 @@ export default function LoginPage() {
               >
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
+              {error?.toLowerCase().includes("confirm") && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    className="text-sm text-green-600 hover:text-green-700 underline"
+                    disabled={isLoading || !email}
+                  >
+                    Resend confirmation email
+                  </button>
+                </div>
+              )}
             </form>
 
-            <div className="relative">
+            {/* <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <Separator />
               </div>
@@ -136,9 +204,9 @@ export default function LoginPage() {
                   Or continue with
                 </span>
               </div>
-            </div>
+            </div> */}
 
-            <div className="grid grid-cols-1 gap-3">
+            {/* <div className="grid grid-cols-1 gap-3">
               <Button variant="outline" className="w-full">
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
@@ -160,13 +228,13 @@ export default function LoginPage() {
                 </svg>
                 Google
               </Button>
-            </div>
+            </div> */}
 
             <div className="text-center">
               <span className="text-sm text-gray-600">
                 Don't have an account?{" "}
                 <Link
-                  href="/signup"
+                  href="/#services"
                   className="font-medium text-green-600 hover:text-green-500"
                 >
                   Sign up

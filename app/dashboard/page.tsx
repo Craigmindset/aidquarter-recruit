@@ -1,5 +1,11 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Users,
   CreditCard,
@@ -7,19 +13,91 @@ import {
   Wallet,
   TrendingUp,
   Calendar,
+  FileText,
+  IdCard,
+  Camera,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { supabase } from "@/lib/supabase";
 
 export default function DashboardOverview() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [showVetting, setShowVetting] = useState(false);
+  const displayName =
+    (user?.user_metadata as any)?.firstName ?? user?.email ?? "there";
+  const role =
+    ((user?.user_metadata as any)?.role as string | undefined)?.toLowerCase() ??
+    "applicant";
+  const roleTitle = role
+    ? role.charAt(0).toUpperCase() + role.slice(1)
+    : "Applicant";
+
+  useEffect(() => {
+    if (!user) return;
+    const run = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("staff_profile")
+          .select("vet_fee, verified, ninpass, idpass, facepass")
+          .eq("user_id", user.id)
+          .single();
+        if (error) {
+          setShowVetting(true);
+          return;
+        }
+        if (data?.vet_fee === false) {
+          setShowVetting(true);
+        } else if (data?.vet_fee === true && data?.verified === false) {
+          setShowVetting(false);
+          if (data?.ninpass !== true) {
+            router.replace("/verification/documentmatch");
+          } else if (data?.idpass !== true) {
+            router.replace("/verification/idmatch");
+          } else if (data?.facepass !== true) {
+            router.replace("/verification/facematch");
+          } else {
+            try {
+              await supabase
+                .from("staff_profile")
+                .update({ verified: true })
+                .eq("user_id", user.id);
+            } catch {}
+            router.replace("/verification/success");
+          }
+        } else {
+          setShowVetting(false);
+        }
+      } catch {
+        setShowVetting(true);
+      }
+    };
+
+    run();
+  }, [user, router]);
+
+  const handleProceedVetting = () => {
+    router.push("/verification/pay");
+  };
+
   const stats = [
     {
-      title: "Active Employees",
+      title: "Active Position",
       value: "3",
       icon: UserCheck,
       change: "+1 this month",
       changeType: "positive" as const,
     },
     {
-      title: "Selected Candidates",
+      title: "Role Request",
       value: "2",
       icon: Users,
       change: "Pending interviews",
@@ -31,13 +109,6 @@ export default function DashboardOverview() {
       icon: CreditCard,
       change: "+12% from last month",
       changeType: "positive" as const,
-    },
-    {
-      title: "Wallet Balance",
-      value: "₦45,000",
-      icon: Wallet,
-      change: "Last topped up 3 days ago",
-      changeType: "neutral" as const,
     },
   ];
 
@@ -70,17 +141,55 @@ export default function DashboardOverview() {
 
   return (
     <div className="space-y-6">
+      <AlertDialog open={showVetting}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Welcome</AlertDialogTitle>
+            <AlertDialogDescription>
+              Thank you for signing up as a{" "}
+              <span className="font-semibold">{roleTitle}</span>. Aidquarters
+              would like to profile you by vetting your data and authenticating
+              your application.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid grid-cols-3 gap-4 py-4">
+            <div className="flex flex-col items-center text-center">
+              <FileText className="h-8 w-8 text-gray-700" />
+              <span className="text-xs mt-2 text-gray-600">Documents</span>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <IdCard className="h-8 w-8 text-gray-700" />
+              <span className="text-xs mt-2 text-gray-600">Valid ID</span>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <Camera className="h-8 w-8 text-gray-700" />
+              <span className="text-xs mt-2 text-gray-600">Facial Auth</span>
+            </div>
+          </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 text-sm text-yellow-900">
+            A vetting fee of ₦3,000 will be required during the process.
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={handleProceedVetting}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Welcome back, John!
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Here's what's happening with your household staff today.
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
+          Welcome, {displayName}.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <Card
             key={stat.title}
@@ -98,11 +207,11 @@ export default function DashboardOverview() {
               </div>
               <p
                 className={`text-xs ${
-                  stat.changeType === "positive"
-                    ? "text-green-600 dark:text-green-400"
-                    : stat.changeType === "negative"
-                    ? "text-red-600 dark:text-red-400"
-                    : "text-gray-500 dark:text-gray-400"
+                  {
+                    positive: "text-green-600 dark:text-green-400",
+                    negative: "text-red-600 dark:text-red-400",
+                    neutral: "text-gray-500 dark:text-gray-400",
+                  }[stat.changeType]
                 }`}
               >
                 {stat.change}
@@ -126,18 +235,18 @@ export default function DashboardOverview() {
               <Card className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors dark:bg-gray-900 dark:border-gray-700">
                 <div className="text-center">
                   <Users className="h-8 w-8 mx-auto mb-2 text-green-600 dark:text-green-400" />
-                  <p className="font-medium dark:text-white">Find New Staff</p>
+                  <p className="font-medium dark:text-white">Update Profile</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Browse candidates
+                    Update your details
                   </p>
                 </div>
               </Card>
               <Card className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors dark:bg-gray-900 dark:border-gray-700">
                 <div className="text-center">
                   <CreditCard className="h-8 w-8 mx-auto mb-2 text-blue-600 dark:text-blue-400" />
-                  <p className="font-medium dark:text-white">Make Payment</p>
+                  <p className="font-medium dark:text-white">Salary History</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Pay your staff
+                    View past payments
                   </p>
                 </div>
               </Card>
@@ -155,9 +264,9 @@ export default function DashboardOverview() {
               <Card className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors dark:bg-gray-900 dark:border-gray-700">
                 <div className="text-center">
                   <Wallet className="h-8 w-8 mx-auto mb-2 text-orange-600 dark:text-orange-400" />
-                  <p className="font-medium dark:text-white">Top Up Wallet</p>
+                  <p className="font-medium dark:text-white">Insurance +</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Add funds
+                    Manage coverage
                   </p>
                 </div>
               </Card>
@@ -180,10 +289,10 @@ export default function DashboardOverview() {
                         activity.type === "payment"
                           ? "bg-green-500"
                           : activity.type === "interview"
-                          ? "bg-blue-500"
-                          : activity.type === "topup"
-                          ? "bg-orange-500"
-                          : "bg-purple-500"
+                            ? "bg-blue-500"
+                            : activity.type === "topup"
+                              ? "bg-orange-500"
+                              : "bg-purple-500"
                       }`}
                     />
                     <div>

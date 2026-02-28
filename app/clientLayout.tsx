@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useEffect } from "react";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -8,6 +9,7 @@ import ChatBox from "@/components/chatbox";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function ClientLayout({
   children,
@@ -19,6 +21,15 @@ export default function ClientLayout({
   const isLogin = pathname?.startsWith("/login");
   const isSignup = pathname?.startsWith("/signup");
   const isAuthPage = isLogin || isSignup;
+
+  useEffect(() => {
+    if (!isDashboard) {
+      try {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.removeAttribute("data-theme");
+      } catch {}
+    }
+  }, [isDashboard]);
 
   return (
     <body className="font-sans overflow-x-hidden pt-16 md:pt-0">
@@ -42,6 +53,7 @@ export default function ClientLayout({
             {!isAuthPage && <ChatBox />}
           </>
         )}
+        <Toaster />
       </AuthProvider>
     </body>
   );

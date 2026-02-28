@@ -66,6 +66,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    const sync = async () => {
+      if (!user) return;
+      try {
+        const { data } = await supabase
+          .from("staff_profile")
+          .select("user_id")
+          .eq("user_id", user.id)
+          .limit(1);
+        if (!data || data.length === 0) {
+          const meta = (user.user_metadata as any) || {};
+          await supabase.from("staff_profile").upsert(
+            {
+              user_id: user.id,
+              first_name: meta.firstName ?? "",
+              last_name: meta.lastName ?? "",
+              email: user.email ?? "",
+              email_verified: !!(user as any).email_confirmed_at,
+              phone_number: meta.phone ?? "",
+              state: meta.state ?? "",
+              role: meta.role ?? "",
+              questionnaire: true,
+              vet_fee: false,
+              dob: null,
+              address: null,
+              gender: null,
+              id_upload: null,
+              profile_image: null,
+              facepass: false,
+              ninpass: false,
+              idpass: false,
+              facialvet: null,
+              verified: false,
+            },
+            { onConflict: "user_id" },
+          );
+        }
+      } catch {}
+    };
+    sync();
+  }, [user]);
+
   const signOut = async () => {
     try {
       await supabase.auth.signOut();

@@ -113,19 +113,26 @@ export default function SignupRegisterPage() {
   };
 
   const canCreate = useMemo(() => {
+    const withinLength =
+      form.password.length >= 6 && form.password.length <= 22;
+    const matches = form.password === form.confirmPassword;
     return (
       form.firstName &&
       form.lastName &&
       form.email &&
-      emailVerified &&
       form.phone &&
       form.state &&
       form.role &&
-      form.password &&
-      form.confirmPassword &&
-      form.password === form.confirmPassword
+      withinLength &&
+      matches
     );
-  }, [form, emailVerified]);
+  }, [form]);
+
+  const passwordLengthInvalid =
+    form.password.length > 0 &&
+    (form.password.length < 6 || form.password.length > 22);
+  const confirmMismatch =
+    form.confirmPassword.length > 0 && form.confirmPassword !== form.password;
 
   const createAccount = async () => {
     if (!canCreate) return;
@@ -135,6 +142,10 @@ export default function SignupRegisterPage() {
         email: form.email,
         password: form.password,
         options: {
+          emailRedirectTo:
+            typeof window !== "undefined"
+              ? `${window.location.origin}/login`
+              : undefined,
           data: {
             firstName: form.firstName,
             lastName: form.lastName,
@@ -148,7 +159,27 @@ export default function SignupRegisterPage() {
         setSubmitting(false);
         return;
       }
-      router.push("/signup/success");
+      const userId = data?.user?.id;
+      if (userId) {
+        const questionnaire = true;
+        try {
+          await supabase.from("staff_profile").upsert(
+            {
+              user_id: userId,
+              first_name: form.firstName,
+              last_name: form.lastName,
+              email: form.email,
+              email_verified: false,
+              phone_number: form.phone,
+              state: form.state,
+              role: form.role,
+              questionnaire,
+            },
+            { onConflict: "user_id" },
+          );
+        } catch {}
+      }
+      router.push("/login");
     } catch {
       setSubmitting(false);
     }
@@ -308,67 +339,18 @@ export default function SignupRegisterPage() {
                 </div>
                 <div className="grid gap-2 md:col-span-2">
                   <Label>Email</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="email"
-                      className="flex-1"
-                      value={form.email}
-                      disabled={emailVerified}
-                      onChange={(e) => {
-                        setForm({ ...form, email: e.target.value });
-                        setEmailVerified(false);
-                        setOtp("");
-                        setOtpCode("");
-                        setOtpSent(false);
-                      }}
-                    />
-                    {emailVerified ? (
-                      <Button
-                        disabled
-                        className="bg-green-600 hover:bg-green-600 text-white"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Verified
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={sendOtp}
-                        className="bg-[#0b1a33] hover:bg-[#132743] text-white"
-                      >
-                        Send OTP
-                      </Button>
-                    )}
-                  </div>
-                  {otpSent && !emailVerified && (
-                    <div className="space-y-2">
-                      <Label>Enter 6-digit OTP</Label>
-                      <InputOTP
-                        maxLength={6}
-                        value={otp}
-                        onChange={(v) => setOtp(v)}
-                      >
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={verifyOtp}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          Verify
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  {emailVerified && (
-                    <p className="text-green-600">Email verified</p>
-                  )}
+                  <Input
+                    type="email"
+                    className="flex-1"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                  />
+                  <p className="text-xs text-gray-600">
+                    A confirmation link will be sent to this email after you
+                    create your account.
+                  </p>
                 </div>
                 <div className="grid gap-2">
                   <Label>Phone Number</Label>
@@ -424,6 +406,8 @@ export default function SignupRegisterPage() {
                       onChange={(e) =>
                         setForm({ ...form, password: e.target.value })
                       }
+                      minLength={6}
+                      maxLength={22}
                       className="pr-10"
                     />
                     <button
@@ -439,6 +423,11 @@ export default function SignupRegisterPage() {
                       )}
                     </button>
                   </div>
+                  {passwordLengthInvalid && (
+                    <p className="text-sm text-red-600">
+                      Password must be 6–22 characters
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <Label>Confirm Password</Label>
@@ -449,7 +438,9 @@ export default function SignupRegisterPage() {
                       onChange={(e) =>
                         setForm({ ...form, confirmPassword: e.target.value })
                       }
-                      className="pr-10"
+                      minLength={6}
+                      maxLength={22}
+                      className={`pr-10 ${confirmMismatch ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
                     <button
                       type="button"
@@ -464,6 +455,11 @@ export default function SignupRegisterPage() {
                       )}
                     </button>
                   </div>
+                  {confirmMismatch && (
+                    <p className="text-sm text-red-600">
+                      Passwords do not match
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="pt-2">
@@ -472,7 +468,7 @@ export default function SignupRegisterPage() {
                   onClick={createAccount}
                   className="w-full h-12 rounded-xl bg-[#0b1a33] hover:bg-[#132743] text-white font-semibold"
                 >
-                  Continue
+                  Create Account
                 </Button>
               </div>
             </div>
