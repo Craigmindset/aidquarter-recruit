@@ -1,12 +1,26 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, CheckCircle, X } from "lucide-react";
 
 export default function SignupInfoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center px-4 py-10">
+          <span className="text-gray-700">Loading…</span>
+        </div>
+      }
+    >
+      <SignupInfoBody />
+    </Suspense>
+  );
+}
+
+function SignupInfoBody() {
   const router = useRouter();
   const search = useSearchParams();
   const role = (search.get("role") || "").toLowerCase();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,6 +31,20 @@ import { supabase } from "@/lib/supabase";
 import { Eye, EyeOff, CheckCircle } from "lucide-react";
 
 export default function SignupRegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center px-4 py-10">
+          <span className="text-gray-700">Loading…</span>
+        </div>
+      }
+    >
+      <SignupRegisterBody />
+    </Suspense>
+  );
+}
+
+function SignupRegisterBody() {
   const router = useRouter();
   const search = useSearchParams();
   const roleParam = (search.get("role") || "nanny").toLowerCase();
