@@ -45,10 +45,9 @@ export default function HomePage() {
                   <span className="text-red-600"> In Minutes</span>
                 </h1>
                 <p className="text-m md:text-lg text-gray-600 leading-relaxed md:leading-normal text-justify md:text-start ">
-                  Connect with families across Nigeria. Simple, secure, and
-                  focused on your success as a household professional. Join a
-                  community that values your work, supports your journey, and
-                  connects you to families who truly appreciate what you do.
+                  Connect with families across Nigeria. Join a community that
+                  values your work, supports your journey, and connects you to
+                  families who truly appreciate what you do.
                 </p>
               </div>
 
