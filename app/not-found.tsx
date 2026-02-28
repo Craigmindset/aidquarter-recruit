@@ -6,7 +6,7 @@ export default function NotFound() {
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold text-gray-900">Page not found</h1>
         <p className="text-gray-600">
-          Sorry, the page you are looking for does not exist.
+          Sorry, the page you are looking for does not exist.1
         </p>
         <div className="flex gap-3 justify-center">
           <Link
