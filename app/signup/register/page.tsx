@@ -28,6 +28,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff, CheckCircle } from "lucide-react";
 
 export default function SignupRegisterPage() {
@@ -59,6 +60,11 @@ function SignupRegisterBody() {
     q4: "",
     q5: "",
   });
+
+  const canProceed = useMemo(
+    () => Object.values(answers).every((a) => a === "yes"),
+    [answers],
+  );
 
   const [form, setForm] = useState({
     firstName: "",
@@ -149,10 +155,46 @@ function SignupRegisterBody() {
     form.confirmPassword.length > 0 && form.confirmPassword !== form.password;
 
   const createAccount = async () => {
-    if (!canCreate) return;
+    const missing: string[] = [];
+    if (!form.firstName) missing.push("first name");
+    if (!form.lastName) missing.push("last name");
+    if (!form.email) missing.push("email");
+    if (!form.phone) missing.push("phone");
+    if (!form.state) missing.push("state");
+    if (!form.role) missing.push("role");
+
+    if (missing.length) {
+      toast({
+        title: "Missing information",
+        description: `Please complete: ${missing.join(", ")}`,
+      });
+      return;
+    }
+    if (form.phone.length !== 11) {
+      toast({
+        title: "Invalid phone number",
+        description: "Phone number must be exactly 11 digits.",
+      });
+      return;
+    }
+    if (form.password.length < 6 || form.password.length > 22) {
+      toast({
+        title: "Invalid password",
+        description: "Password must be 6–22 characters.",
+      });
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      toast({
+        title: "Passwords do not match",
+        description: "Make sure both passwords match.",
+      });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
@@ -169,7 +211,11 @@ function SignupRegisterBody() {
           },
         },
       });
-      if (error) {
+      if (signUpError) {
+        toast({
+          title: "Sign up failed",
+          description: signUpError.message || "Unable to create account.",
+        });
         setSubmitting(false);
         return;
       }
@@ -193,8 +239,12 @@ function SignupRegisterBody() {
           );
         } catch {}
       }
-      router.push("/login");
-    } catch {
+      router.push("/signup/success");
+    } catch (e: any) {
+      toast({
+        title: "Unexpected error",
+        description: e?.message || "Please try again.",
+      });
       setSubmitting(false);
     }
   };
@@ -300,6 +350,7 @@ function SignupRegisterBody() {
                 <Button
                   className="bg-green-600 hover:bg-green-700"
                   onClick={proceedFromQuestionnaire}
+                  disabled={!canProceed}
                 >
                   Continue
                 </Button>
@@ -369,10 +420,17 @@ function SignupRegisterBody() {
                 <div className="grid gap-2">
                   <Label>Phone Number</Label>
                   <Input
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={11}
                     value={form.phone}
-                    onChange={(e) =>
-                      setForm({ ...form, phone: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const digits = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 11);
+                      setForm({ ...form, phone: digits });
+                    }}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -478,7 +536,7 @@ function SignupRegisterBody() {
               </div>
               <div className="pt-2">
                 <Button
-                  disabled={!canCreate || submitting}
+                  disabled={submitting}
                   onClick={createAccount}
                   className="w-full h-12 rounded-xl bg-[#0b1a33] hover:bg-[#132743] text-white font-semibold"
                 >

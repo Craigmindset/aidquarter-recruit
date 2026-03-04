@@ -10,16 +10,9 @@ export async function POST(req: NextRequest) {
 
     const res = NextResponse.json({ ok: true });
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL as string | undefined;
-    const key =
-      (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY as
-        | string
-        | undefined) ||
-      (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string | undefined);
-
     const supabase = createServerClient(
-      (url || "") as string,
-      (key || "") as string,
+      process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY as string,
       {
         cookies: {
           get: (name: string) => req.cookies.get(name)?.value,

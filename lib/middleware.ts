@@ -7,18 +7,9 @@ export const protectedMatchers = ["/dashboard/:path*"];
 export async function runMiddleware(req: NextRequest) {
   const res = NextResponse.next();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as
-    | string
-    | undefined;
-  const supabaseKey =
-    (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY as
-      | string
-      | undefined) ||
-    (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string | undefined);
-
   const supabase = createServerClient(
-    (supabaseUrl || "") as string,
-    (supabaseKey || "") as string,
+    process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY as string,
     {
       cookies: {
         get: (name: string) => req.cookies.get(name)?.value,
@@ -46,13 +37,13 @@ export async function runMiddleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const nextUrl = req.nextUrl.clone();
-  const pathname = nextUrl.pathname;
+  const url = req.nextUrl.clone();
+  const pathname = url.pathname;
 
   if (pathname.startsWith("/dashboard") && !session) {
     const redirectUrl = req.nextUrl.clone();
     redirectUrl.pathname = "/login";
-    redirectUrl.searchParams.set("next", pathname + (nextUrl.search || ""));
+    redirectUrl.searchParams.set("next", pathname + (url.search || ""));
     return NextResponse.redirect(redirectUrl);
   }
 

@@ -111,9 +111,12 @@ export default function SettingsPage() {
       fd.append("public_id", `profiles/${user.id}/avatar`);
       fd.append("overwrite", "true");
       fd.append("invalidate", "true");
-      const res = await fetch("/api/cloudinary/upload", { method: "POST", body: fd });
+      const res = await fetch("/api/cloudinary/upload", {
+        method: "POST",
+        body: fd,
+      });
       if (!res.ok) {
-        const j = await res.json().catch(() => ({} as any));
+        const j = await res.json().catch(() => ({}) as any);
         throw new Error((j as any)?.error || "Upload failed");
       }
       const j = await res.json();
@@ -126,7 +129,9 @@ export default function SettingsPage() {
         setAvatarUrl(url);
         setFile(null);
         try {
-          window.dispatchEvent(new CustomEvent("aq:profile-image-updated", { detail: { url } }));
+          window.dispatchEvent(
+            new CustomEvent("aq:profile-image-updated", { detail: { url } }),
+          );
         } catch {}
         try {
           router.refresh();
@@ -152,7 +157,9 @@ export default function SettingsPage() {
     }
     setPwdSaving(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
       if (error) throw error;
       setPwdMsg("Password updated");
       setNewPassword("");
@@ -179,11 +186,17 @@ export default function SettingsPage() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="grid gap-1">
                     <Label>First Name</Label>
-                    <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                    <Input
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>Last Name</Label>
-                    <Input value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                    <Input
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>Date of Birth</Label>
@@ -203,11 +216,17 @@ export default function SettingsPage() {
                   </div>
                   <div className="grid gap-1 md:col-span-2">
                     <Label>Address</Label>
-                    <Input value={address ?? ""} onChange={(e) => setAddress(e.target.value)} />
+                    <Input
+                      value={address ?? ""}
+                      onChange={(e) => setAddress(e.target.value)}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>State</Label>
-                    <Input value={stateVal ?? ""} onChange={(e) => setStateVal(e.target.value)} />
+                    <Input
+                      value={stateVal ?? ""}
+                      onChange={(e) => setStateVal(e.target.value)}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>Email</Label>
@@ -217,7 +236,11 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarImage src={avatarUrl ?? ""} alt="Avatar" className="object-cover" />
+                      <AvatarImage
+                        src={avatarUrl ?? ""}
+                        alt="Avatar"
+                        className="object-cover"
+                      />
                       <AvatarFallback>
                         {`${(firstName?.[0] ?? email?.[0] ?? "U").toUpperCase()}${(lastName?.[0] ?? "").toUpperCase()}`}
                       </AvatarFallback>
@@ -236,7 +259,9 @@ export default function SettingsPage() {
                     {uploading ? "Uploading..." : "Upload Image"}
                   </Button>
                 </div>
-                {uploadErr && <p className="text-sm text-red-600">{uploadErr}</p>}
+                {uploadErr && (
+                  <p className="text-sm text-red-600">{uploadErr}</p>
+                )}
                 <div className="flex justify-end">
                   <Button
                     onClick={handleSaveProfile}

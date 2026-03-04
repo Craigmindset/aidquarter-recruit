@@ -16,6 +16,7 @@ import {
   FileText,
   IdCard,
   Camera,
+  X,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -29,7 +30,7 @@ import {
 import { supabase } from "@/lib/supabase";
 
 export default function DashboardOverview() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const router = useRouter();
   const [showVetting, setShowVetting] = useState(false);
   const displayName =
@@ -143,6 +144,16 @@ export default function DashboardOverview() {
     <div className="space-y-6">
       <AlertDialog open={showVetting}>
         <AlertDialogContent className="max-w-lg">
+          <div className="absolute top-3 right-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={signOut}
+              aria-label="Exit dashboard"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
           <AlertDialogHeader>
             <AlertDialogTitle>Welcome</AlertDialogTitle>
             <AlertDialogDescription>
