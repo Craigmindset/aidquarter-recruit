@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -20,6 +27,10 @@ export default function SettingsPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [saveErr, setSaveErr] = useState<string | null>(null);
 
+  const [savingWork, setSavingWork] = useState(false);
+  const [saveWorkMsg, setSaveWorkMsg] = useState<string | null>(null);
+  const [saveWorkErr, setSaveWorkErr] = useState<string | null>(null);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
@@ -30,6 +41,7 @@ export default function SettingsPage() {
 
   const [file, setFile] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
 
@@ -38,6 +50,49 @@ export default function SettingsPage() {
   const [pwdMsg, setPwdMsg] = useState<string | null>(null);
   const [pwdErr, setPwdErr] = useState<string | null>(null);
   const [pwdSaving, setPwdSaving] = useState(false);
+
+  const [preferredWorkLocation, setPreferredWorkLocation] = useState("");
+  const [salaryRange, setSalaryRange] = useState("");
+  const [experienceYears, setExperienceYears] = useState<number | "">("");
+
+  const NIGERIAN_STATES = [
+    "Abia",
+    "Adamawa",
+    "Akwa Ibom",
+    "Anambra",
+    "Bauchi",
+    "Bayelsa",
+    "Benue",
+    "Borno",
+    "Cross River",
+    "Delta",
+    "Ebonyi",
+    "Edo",
+    "Ekiti",
+    "Enugu",
+    "Gombe",
+    "Imo",
+    "Jigawa",
+    "Kaduna",
+    "Kano",
+    "Katsina",
+    "Kebbi",
+    "Kogi",
+    "Kwara",
+    "Lagos",
+    "Nasarawa",
+    "Niger",
+    "Ogun",
+    "Ondo",
+    "Osun",
+    "Oyo",
+    "Plateau",
+    "Rivers",
+    "Sokoto",
+    "Taraba",
+    "Yobe",
+    "Zamfara",
+  ];
 
   useEffect(() => {
     const load = async () => {
@@ -86,6 +141,12 @@ export default function SettingsPage() {
           address: address || null,
           state: stateVal || null,
           email: email || null,
+          preferred_work_location: preferredWorkLocation || null,
+          salary_range: salaryRange || null,
+          experience:
+            typeof experienceYears === "number" && experienceYears >= 1
+              ? `${experienceYears} year${experienceYears === 1 ? "" : "s"}`
+              : null,
         })
         .eq("user_id", user.id);
       setSaveMsg("Profile saved");
@@ -97,6 +158,32 @@ export default function SettingsPage() {
       setSaveErr(e?.message || "Save error");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveWorkDetails = async () => {
+    if (!user?.id) return;
+    setSavingWork(true);
+    setSaveWorkMsg(null);
+    setSaveWorkErr(null);
+    try {
+      await supabase
+        .from("staff_profile")
+        .update({
+          preferred_work_location: preferredWorkLocation || null,
+          salary_range: salaryRange || null,
+          experience:
+            typeof experienceYears === "number" && experienceYears >= 1
+              ? `${experienceYears} year${experienceYears === 1 ? "" : "s"}`
+              : null,
+        })
+        .eq("user_id", user.id);
+      setSaveWorkMsg("Work details saved");
+      toast({ title: "Updated successfully" });
+    } catch (e: any) {
+      setSaveWorkErr(e?.message || "Save error");
+    } finally {
+      setSavingWork(false);
     }
   };
 
@@ -172,15 +259,58 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-10 bg-gray-50">
+    <div className="min-h-screen px-4 py-10 bg-gray-50 dark:bg-gray-950">
       <div className="max-w-4xl mx-auto space-y-6">
-        <Card className="shadow-xl border-0">
+        <Card className="mt-6 shadow-xl border-0 dark:bg-gray-800 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle>Profile Image</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage
+                    src={previewUrl ?? avatarUrl ?? ""}
+                    alt="Avatar"
+                    className="object-cover"
+                  />
+                  <AvatarFallback>
+                    {`${(firstName?.[0] ?? email?.[0] ?? "U").toUpperCase()}${(lastName?.[0] ?? "").toUpperCase()}`}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {file ? file.name : "Select an image to preview"}
+                </span>
+              </div>
+              <div className="flex gap-3 items-center">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    setFile(f);
+                    if (f) setPreviewUrl(URL.createObjectURL(f));
+                  }}
+                />
+                <Button
+                  onClick={handleUploadAvatar}
+                  disabled={!file || uploading}
+                  className="bg-[#0b1a33] hover:bg-[#132743] text-white"
+                >
+                  {uploading ? "Uploading..." : "Upload"}
+                </Button>
+              </div>
+            </div>
+            {uploadErr && <p className="text-sm text-red-600">{uploadErr}</p>}
+          </CardContent>
+        </Card>
+        <Card className="shadow-xl border-0 dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <CardTitle>Profile</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {loading ? (
-              <p className="text-gray-600">Loading...</p>
+              <p className="text-gray-600 dark:text-gray-400">Loading...</p>
             ) : (
               <>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -224,44 +354,23 @@ export default function SettingsPage() {
                   <div className="grid gap-1">
                     <Label>State</Label>
                     <Input
+                      list="states-list"
+                      placeholder="Type your state"
                       value={stateVal ?? ""}
                       onChange={(e) => setStateVal(e.target.value)}
                     />
+                    <datalist id="states-list">
+                      {NIGERIAN_STATES.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
                   </div>
                   <div className="grid gap-1">
                     <Label>Email</Label>
                     <Input value={email} disabled />
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage
-                        src={avatarUrl ?? ""}
-                        alt="Avatar"
-                        className="object-cover"
-                      />
-                      <AvatarFallback>
-                        {`${(firstName?.[0] ?? email?.[0] ?? "U").toUpperCase()}${(lastName?.[0] ?? "").toUpperCase()}`}
-                      </AvatarFallback>
-                    </Avatar>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                    />
-                  </div>
-                  <Button
-                    onClick={handleUploadAvatar}
-                    disabled={!file || uploading}
-                    className="bg-[#0b1a33] hover:bg-[#132743] text-white"
-                  >
-                    {uploading ? "Uploading..." : "Upload Image"}
-                  </Button>
-                </div>
-                {uploadErr && (
-                  <p className="text-sm text-red-600">{uploadErr}</p>
-                )}
+
                 <div className="flex justify-end">
                   <Button
                     onClick={handleSaveProfile}
@@ -278,7 +387,78 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-xl border-0">
+        <Card className="shadow-xl border-0 dark:bg-gray-800 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle>Work Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid gap-1 md:col-span-2">
+                <Label>Preferred Work Location</Label>
+                <Input
+                  list="states-list-work"
+                  placeholder="Type a state"
+                  value={preferredWorkLocation}
+                  onChange={(e) => setPreferredWorkLocation(e.target.value)}
+                />
+                <datalist id="states-list-work">
+                  {NIGERIAN_STATES.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+              </div>
+              <div className="grid gap-1 md:col-span-2">
+                <Label>Salary Range</Label>
+                <Select value={salaryRange} onValueChange={setSalaryRange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select salary range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Open">Open</SelectItem>
+                    <SelectItem value="Negotiable">Negotiable</SelectItem>
+                    <SelectItem value="50,000 - 100,000">
+                      50,000 - 100,000
+                    </SelectItem>
+                    <SelectItem value="100,000 - above">
+                      100,000 - above
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-1">
+                <Label>My Experience (years)</Label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  value={experienceYears}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, "");
+                    const n = v ? Math.min(20, Math.max(1, Number(v))) : "";
+                    setExperienceYears(n as any);
+                  }}
+                  placeholder="1-20"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSaveWorkDetails}
+                disabled={savingWork}
+                className="bg-green-600 hover:bg-green-700 active:opacity-80 active:scale-95 transition"
+              >
+                {savingWork ? "Saving..." : "Save Work Details"}
+              </Button>
+            </div>
+            {saveWorkMsg && (
+              <p className="text-sm text-green-600">{saveWorkMsg}</p>
+            )}
+            {saveWorkErr && (
+              <p className="text-sm text-red-600">{saveWorkErr}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-xl border-0 dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <CardTitle>Change Password</CardTitle>
           </CardHeader>

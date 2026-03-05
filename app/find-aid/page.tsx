@@ -3,126 +3,160 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
 import { MapPin, DollarSign, X, ChevronDown } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+const CACHE_KEY = "find-aid:workers:v1";
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
-// Mock data for aid workers
-const aidWorkers = [
-  {
-    id: 1,
-    name: "Adunni Okafor",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Housekeeper",
-    salaryRange: "₦40,000 - ₦50,000",
-    currentLocation: "Lagos",
-    preferredWorkLocation: "Lagos only",
-    rating: 4.8,
-    experience: "5 years",
-  },
-  {
-    id: 2,
-    name: "Blessing Adebayo",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Nanny",
-    salaryRange: "₦60,000 - ₦80,000",
-    currentLocation: "Abuja",
-    preferredWorkLocation: "Open",
-    rating: 4.9,
-    experience: "7 years",
-  },
-  {
-    id: 3,
-    name: "Emeka Okonkwo",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Driver",
-    salaryRange: "₦45,000 - ₦55,000",
-    currentLocation: "Lagos",
-    preferredWorkLocation: "Lagos only",
-    rating: 4.7,
-    experience: "8 years",
-  },
-  {
-    id: 4,
-    name: "Fatima Ibrahim",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Housekeeper",
-    salaryRange: "₦35,000 - ₦45,000",
-    currentLocation: "Kano",
-    preferredWorkLocation: "Open",
-    rating: 4.6,
-    experience: "4 years",
-  },
-  {
-    id: 5,
-    name: "Grace Okoro",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Nanny",
-    salaryRange: "₦55,000 - ₦70,000",
-    currentLocation: "Port Harcourt",
-    preferredWorkLocation: "Open",
-    rating: 4.8,
-    experience: "6 years",
-  },
-  {
-    id: 6,
-    name: "Ibrahim Musa",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Driver",
-    salaryRange: "₦50,000 - ₦60,000",
-    currentLocation: "Abuja",
-    preferredWorkLocation: "Abuja only",
-    rating: 4.9,
-    experience: "10 years",
-  },
-  {
-    id: 7,
-    name: "Chioma Nwankwo",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Housekeeper",
-    salaryRange: "₦42,000 - ₦52,000",
-    currentLocation: "Lagos",
-    preferredWorkLocation: "Lagos only",
-    rating: 4.7,
-    experience: "5 years",
-  },
-  {
-    id: 8,
-    name: "Aisha Mohammed",
-    image: "/placeholder.svg?height=200&width=200",
-    status: "Available to work",
-    position: "Nanny",
-    salaryRange: "₦65,000 - ₦85,000",
-    currentLocation: "Lagos",
-    preferredWorkLocation: "Open",
-    rating: 4.9,
-    experience: "9 years",
-  },
-];
+type Worker = {
+  id: string | number;
+  name: string;
+  image: string | null;
+  status: string;
+  position: string;
+  salaryRange: string;
+  currentLocation: string;
+  preferredWorkLocation: string;
+  rating: number;
+  experience: string;
+};
+
+type StaffProfileRow = {
+  user_id: string | number;
+  first_name: string | null;
+  last_name: string | null;
+  status: string | null;
+  role: string | null;
+  salary_range: string | null;
+  state: string | null;
+  preferred_work_location: string | null;
+  rating: number | string | null;
+  experience: string | null;
+  profile_image: string | null;
+};
 
 export default function FindAidPage() {
+  const [workers, setWorkers] = useState<Worker[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [positionDropdownOpen, setPositionDropdownOpen] = useState(false);
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
-  const [selectedWorker, setSelectedWorker] = useState<
-    (typeof aidWorkers)[0] | null
-  >(null);
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchWorkers() {
+      setError(null);
+      let hadCache = false;
+      if (typeof window !== "undefined") {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw) as { ts: number; data: Worker[] };
+            if (Date.now() - parsed.ts < CACHE_TTL_MS) {
+              setWorkers(parsed.data);
+              setLoading(false);
+              hadCache = true;
+            }
+          } catch {}
+        }
+      }
+      setRefreshing(true);
+      const baseSelect =
+        "user_id, first_name, last_name, status, role, salary_range, state, preferred_work_location, rating, experience, profile_image, verified";
+      let resultData: StaffProfileRow[] | null = null;
+      let errMsg: string | null = null;
+      const attempt1 = await supabase
+        .from("staff_profile")
+        .select(baseSelect)
+        .eq("verified", true);
+      if (attempt1.error) {
+        errMsg = attempt1.error.message;
+      }
+      if (attempt1.data && attempt1.data.length > 0) {
+        resultData = attempt1.data as StaffProfileRow[];
+      }
+      if (!resultData) {
+        const attempt2 = await supabase
+          .from("staff_profile")
+          .select(baseSelect)
+          .eq("status", "verified");
+        if (!attempt2.error && attempt2.data && attempt2.data.length > 0) {
+          resultData = attempt2.data as StaffProfileRow[];
+          errMsg = null;
+        } else if (attempt2.error) {
+          errMsg = attempt2.error.message;
+          const msgLower = (errMsg ?? "").toLowerCase();
+          if (
+            msgLower.includes("invalid input syntax") ||
+            msgLower.includes("boolean")
+          ) {
+            const attempt3 = await supabase
+              .from("staff_profile")
+              .select(baseSelect)
+              .eq("status", true);
+            if (!attempt3.error && attempt3.data && attempt3.data.length > 0) {
+              resultData = attempt3.data as StaffProfileRow[];
+              errMsg = null;
+            } else if (attempt3.error) {
+              errMsg = attempt3.error.message;
+            }
+          }
+        }
+      }
+      if (!isMounted) return;
+      const mapped: Worker[] =
+        (resultData as StaffProfileRow[] | null)?.map((row) => ({
+          id: row.user_id,
+          name: (row.first_name ?? "").trim() || "Unnamed",
+          image: row.profile_image ?? "/placeholder.svg?height=200&width=200",
+          status: row.status ?? "Available to work",
+          position: row.role ?? "",
+          salaryRange: row.salary_range ?? "",
+          currentLocation: row.state ?? "",
+          preferredWorkLocation: row.preferred_work_location ?? "Open",
+          rating:
+            typeof row.rating === "number"
+              ? row.rating
+              : Number(row.rating ?? 0),
+          experience: row.experience ?? "",
+        })) ?? [];
+      setWorkers(mapped);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ ts: Date.now(), data: mapped }),
+          );
+        } catch {}
+      }
+      setError(mapped.length === 0 && errMsg ? errMsg : null);
+      setRefreshing(false);
+      if (!hadCache) setLoading(false);
+    }
+    fetchWorkers();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Extract unique positions and states
-  const positions = Array.from(new Set(aidWorkers.map((w) => w.position)));
-  const states = Array.from(new Set(aidWorkers.map((w) => w.currentLocation)));
+  const positions = Array.from(
+    new Set(workers.map((w) => w.position).filter(Boolean)),
+  );
+  const states = Array.from(
+    new Set(workers.map((w) => w.currentLocation).filter(Boolean)),
+  );
 
   // Filter workers based on selected filters
-  const filteredWorkers = aidWorkers.filter((worker) => {
+  const filteredWorkers = workers.filter((worker) => {
     const matchesPosition =
       !selectedPosition || worker.position === selectedPosition;
     const matchesState =
@@ -134,7 +168,7 @@ export default function FindAidPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Banner */}
       <section className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
-        <div className="container mx-auto px-4 lg:px-6 text-center">
+        <div className="container mx-auto px-4 lg:px-6 text-center mt-10">
           <h1 className="text-4xl lg:text-5xl font-bold mb-4">
             Find Your Perfect Household Staff
           </h1>
@@ -257,13 +291,27 @@ export default function FindAidPage() {
           </div>
 
           <div className="mb-8">
-            <p className="text-gray-600">
-              Showing {filteredWorkers.length} verified professionals
-            </p>
+            {loading ? (
+              <div className="flex items-center gap-2 text-gray-600">
+                <Spinner className="size-5" />
+                <span>Loading verified professionals…</span>
+              </div>
+            ) : error ? (
+              <p className="text-red-600">Failed to load workers: {error}</p>
+            ) : (
+              <p className="text-gray-600">
+                Showing {filteredWorkers.length} verified professionals{" "}
+                {refreshing && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    (refreshing…)
+                  </span>
+                )}
+              </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-            {filteredWorkers.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
+            {!loading && filteredWorkers.length > 0 ? (
               filteredWorkers.map((worker) => (
                 <Card
                   key={worker.id}
@@ -292,13 +340,13 @@ export default function FindAidPage() {
 
                     {/* Worker Info */}
                     <div className="space-y-3 flex-grow">
-                      <div>
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <h3 className="font-semibold text-sm md:text-lg text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
                           {worker.name}
                         </h3>
-                        <p className="text-green-600 font-medium text-sm">
+                        <span className="text-green-600 font-medium text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis md:ml-2">
                           {worker.position}
-                        </p>
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -329,10 +377,6 @@ export default function FindAidPage() {
                           <span className="font-medium">{worker.rating}</span>
                         </div>
                       </div>
-
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
-                        Recruit
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -452,9 +496,6 @@ export default function FindAidPage() {
                 </div>
 
                 {/* Recruit Button */}
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 text-sm mt-2">
-                  Recruit {selectedWorker.name.split(" ")[0]}
-                </Button>
               </div>
             </div>
           </div>

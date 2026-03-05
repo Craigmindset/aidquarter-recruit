@@ -57,7 +57,7 @@ export default function HomePage() {
                   size="lg"
                   className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
                 >
-                  <Link href="/find-aid">Get Started</Link>
+                  <Link href="/signup/success">Get Started</Link>
                 </Button>
               </div>
 
