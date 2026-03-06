@@ -55,6 +55,11 @@ export default function SettingsPage() {
   const [salaryRange, setSalaryRange] = useState("");
   const [experienceYears, setExperienceYears] = useState<number | "">("");
 
+  const SETTINGS_CACHE_KEY = "aq:settings:profile:v2";
+  const SETTINGS_CACHE_TTL = 15 * 60 * 1000;
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
+
   const NIGERIAN_STATES = [
     "Abia",
     "Adamawa",
@@ -101,22 +106,109 @@ export default function SettingsPage() {
         return;
       }
       try {
-        const { data } = await supabase
-          .from("staff_profile")
-          .select(
-            "first_name,last_name,dob,gender,address,state,profile_image,email",
+        let cached: any = null;
+        if (typeof window !== "undefined") {
+          const raw = localStorage.getItem(SETTINGS_CACHE_KEY);
+          if (raw) {
+            try {
+              const j = JSON.parse(raw);
+              if (j?.userId === user.id) cached = j;
+            } catch {}
+          }
+        }
+
+        if (cached?.data) {
+          const d = cached.data;
+          const meta = (user.user_metadata as any) || {};
+          setFirstName(d?.first_name ?? meta.firstName ?? "");
+          setLastName(d?.last_name ?? meta.lastName ?? "");
+          setDob(d?.dob ?? "");
+          setGender(d?.gender ?? "");
+          setAddress(d?.address ?? "");
+          setStateVal(d?.state ?? meta.state ?? "");
+          setEmail(d?.email ?? user.email ?? "");
+          setAvatarUrl(d?.profile_image ?? null);
+          setPreferredWorkLocation(d?.preferred_work_location ?? "");
+          const dbSalary1: string = d?.salary_range ?? "";
+          let sel1 = "";
+          if (dbSalary1 === "Open" || dbSalary1 === "Negotiable")
+            sel1 = dbSalary1;
+          else if (dbSalary1.includes("₦50,000")) sel1 = "50,000 - 100,000";
+          else if (
+            dbSalary1.includes("₦100,000") &&
+            dbSalary1.toLowerCase().includes("above")
           )
-          .eq("user_id", user.id)
-          .single();
-        const meta = (user.user_metadata as any) || {};
-        setFirstName(data?.first_name ?? meta.firstName ?? "");
-        setLastName(data?.last_name ?? meta.lastName ?? "");
-        setDob(data?.dob ?? "");
-        setGender(data?.gender ?? "");
-        setAddress(data?.address ?? "");
-        setStateVal(data?.state ?? meta.state ?? "");
-        setEmail(data?.email ?? user.email ?? "");
-        setAvatarUrl(data?.profile_image ?? null);
+            sel1 = "100,000 - above";
+          setSalaryRange(sel1);
+          const exp1 = d?.experience ?? "";
+          if (typeof exp1 === "string") {
+            const m = exp1.match(/(\d+)/);
+            setExperienceYears(m ? Number(m[1]) : "");
+          } else if (typeof exp1 === "number") setExperienceYears(exp1);
+          setLoading(false);
+        }
+
+        const stale =
+          !cached || !cached.ts || Date.now() - cached.ts > SETTINGS_CACHE_TTL;
+        if (stale) {
+          const { data } = await supabase
+            .from("staff_profile")
+            .select(
+              "first_name,last_name,dob,gender,address,state,profile_image,email,preferred_work_location,salary_range,experience",
+            )
+            .eq("user_id", user.id)
+            .single();
+
+          const meta = (user.user_metadata as any) || {};
+          setFirstName(data?.first_name ?? meta.firstName ?? "");
+          setLastName(data?.last_name ?? meta.lastName ?? "");
+          setDob(data?.dob ?? "");
+          setGender(data?.gender ?? "");
+          setAddress(data?.address ?? "");
+          setStateVal(data?.state ?? meta.state ?? "");
+          setEmail(data?.email ?? user.email ?? "");
+          setAvatarUrl(data?.profile_image ?? null);
+          setPreferredWorkLocation(data?.preferred_work_location ?? "");
+          const dbSalary2: string = data?.salary_range ?? "";
+          let sel2 = "";
+          if (dbSalary2 === "Open" || dbSalary2 === "Negotiable")
+            sel2 = dbSalary2;
+          else if (dbSalary2.includes("₦50,000")) sel2 = "50,000 - 100,000";
+          else if (
+            dbSalary2.includes("₦100,000") &&
+            dbSalary2.toLowerCase().includes("above")
+          )
+            sel2 = "100,000 - above";
+          setSalaryRange(sel2);
+          const exp2 = data?.experience ?? "";
+          if (typeof exp2 === "string") {
+            const m = exp2.match(/(\d+)/);
+            setExperienceYears(m ? Number(m[1]) : "");
+          } else if (typeof exp2 === "number") setExperienceYears(exp2);
+
+          if (typeof window !== "undefined") {
+            const payload = {
+              userId: user.id,
+              ts: Date.now(),
+              data: {
+                first_name: data?.first_name ?? null,
+                last_name: data?.last_name ?? null,
+                dob: data?.dob ?? null,
+                gender: data?.gender ?? null,
+                address: data?.address ?? null,
+                state: data?.state ?? null,
+                email: data?.email ?? null,
+                profile_image: data?.profile_image ?? null,
+                preferred_work_location: data?.preferred_work_location ?? null,
+                salary_range: data?.salary_range ?? null,
+                experience: data?.experience ?? null,
+              },
+            } as any;
+            try {
+              localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(payload));
+            } catch {}
+          }
+        }
       } catch {
       } finally {
         setLoading(false);
@@ -154,6 +246,27 @@ export default function SettingsPage() {
         title: "Profile updated",
         description: "Your changes have been saved successfully.",
       });
+      try {
+        if (typeof window !== "undefined") {
+          const raw = localStorage.getItem(SETTINGS_CACHE_KEY);
+          let j: any = raw ? JSON.parse(raw) : {};
+          const merged = {
+            ...(j?.data ?? {}),
+            first_name: firstName,
+            last_name: lastName,
+            dob: dob || null,
+            gender: gender || null,
+            address: address || null,
+            state: stateVal || null,
+            email: email || null,
+            profile_image: avatarUrl ?? null,
+          };
+          localStorage.setItem(
+            SETTINGS_CACHE_KEY,
+            JSON.stringify({ userId: user.id, ts: Date.now(), data: merged }),
+          );
+        }
+      } catch {}
     } catch (e: any) {
       setSaveErr(e?.message || "Save error");
     } finally {
@@ -167,11 +280,18 @@ export default function SettingsPage() {
     setSaveWorkMsg(null);
     setSaveWorkErr(null);
     try {
+      let salaryValue: string | null = salaryRange || null;
+      if (salaryRange === "50,000 - 100,000") {
+        salaryValue = "₦50,000 - ₦100,000";
+      } else if (salaryRange === "100,000 - above") {
+        salaryValue = "₦100,000 and above";
+      }
+
       await supabase
         .from("staff_profile")
         .update({
           preferred_work_location: preferredWorkLocation || null,
-          salary_range: salaryRange || null,
+          salary_range: salaryValue,
           experience:
             typeof experienceYears === "number" && experienceYears >= 1
               ? `${experienceYears} year${experienceYears === 1 ? "" : "s"}`
@@ -180,6 +300,25 @@ export default function SettingsPage() {
         .eq("user_id", user.id);
       setSaveWorkMsg("Work details saved");
       toast({ title: "Updated successfully" });
+      try {
+        if (typeof window !== "undefined") {
+          const raw = localStorage.getItem(SETTINGS_CACHE_KEY);
+          let j: any = raw ? JSON.parse(raw) : {};
+          const merged = {
+            ...(j?.data ?? {}),
+            preferred_work_location: preferredWorkLocation || null,
+            salary_range: salaryValue ?? null,
+            experience:
+              typeof experienceYears === "number" && experienceYears >= 1
+                ? `${experienceYears} year${experienceYears === 1 ? "" : "s"}`
+                : null,
+          };
+          localStorage.setItem(
+            SETTINGS_CACHE_KEY,
+            JSON.stringify({ userId: user.id, ts: Date.now(), data: merged }),
+          );
+        }
+      } catch {}
     } catch (e: any) {
       setSaveWorkErr(e?.message || "Save error");
     } finally {
@@ -214,6 +353,17 @@ export default function SettingsPage() {
           .update({ profile_image: url })
           .eq("user_id", user.id);
         setAvatarUrl(url);
+        try {
+          if (typeof window !== "undefined") {
+            const raw = localStorage.getItem(SETTINGS_CACHE_KEY);
+            let j: any = raw ? JSON.parse(raw) : {};
+            const merged = { ...(j?.data ?? {}), profile_image: url };
+            localStorage.setItem(
+              SETTINGS_CACHE_KEY,
+              JSON.stringify({ userId: user.id, ts: Date.now(), data: merged }),
+            );
+          }
+        } catch {}
         setFile(null);
         try {
           window.dispatchEvent(
@@ -259,15 +409,15 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-10 bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen px-2 sm:px-4 md:px-6 py-10 bg-gray-50 dark:bg-gray-950">
       <div className="max-w-4xl mx-auto space-y-6">
         <Card className="mt-6 shadow-xl border-0 dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <CardTitle>Profile Image</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
                 <Avatar className="h-16 w-16">
                   <AvatarImage
                     src={previewUrl ?? avatarUrl ?? ""}
@@ -278,14 +428,15 @@ export default function SettingsPage() {
                     {`${(firstName?.[0] ?? email?.[0] ?? "U").toUpperCase()}${(lastName?.[0] ?? "").toUpperCase()}`}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-base text-gray-700 dark:text-gray-300 truncate max-w-[60vw] sm:max-w-xs">
                   {file ? file.name : "Select an image to preview"}
                 </span>
               </div>
-              <div className="flex gap-3 items-center">
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                 <Input
                   type="file"
                   accept="image/*"
+                  className="w-full"
                   onChange={(e) => {
                     const f = e.target.files?.[0] ?? null;
                     setFile(f);
@@ -295,7 +446,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={handleUploadAvatar}
                   disabled={!file || uploading}
-                  className="bg-[#0b1a33] hover:bg-[#132743] text-white"
+                  className="w-full sm:w-auto bg-[#0b1a33] hover:bg-[#132743] text-white"
                 >
                   {uploading ? "Uploading..." : "Upload"}
                 </Button>
@@ -407,23 +558,25 @@ export default function SettingsPage() {
                   ))}
                 </datalist>
               </div>
-              <div className="grid gap-1 md:col-span-2">
-                <Label>Salary Range</Label>
-                <Select value={salaryRange} onValueChange={setSalaryRange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select salary range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Open">Open</SelectItem>
-                    <SelectItem value="Negotiable">Negotiable</SelectItem>
-                    <SelectItem value="50,000 - 100,000">
-                      50,000 - 100,000
-                    </SelectItem>
-                    <SelectItem value="100,000 - above">
-                      100,000 - above
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid gap-2 md:col-span-2">
+                <div className="grid gap-1">
+                  <Label>Salary Range</Label>
+                  <Select value={salaryRange} onValueChange={setSalaryRange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select salary range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Open">Open</SelectItem>
+                      <SelectItem value="Negotiable">Negotiable</SelectItem>
+                      <SelectItem value="50,000 - 100,000">
+                        50,000 - 100,000
+                      </SelectItem>
+                      <SelectItem value="100,000 - above">
+                        100,000 - above
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="grid gap-1">
                 <Label>My Experience (years)</Label>

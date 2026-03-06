@@ -10,6 +10,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Users,
@@ -19,9 +21,11 @@ import {
   Home,
   Settings,
   LogOut,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const menuItems = [
   {
@@ -49,36 +53,56 @@ const menuItems = [
     url: "/dashboard/wallet",
     icon: Wallet,
   },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings,
+  },
 ];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <Sidebar className="border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-      <SidebarHeader className="border-b border-gray-200 dark:border-gray-800 mt-20 px-6 pb-6">
-        <div>
-          <h2 className="font-bold text-xl text-gray-900 dark:text-white">
-            Dashboard
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Management Portal
-          </p>
+      <SidebarHeader className="border-b border-gray-200 dark:border-gray-800 mt-16 px-6 pb-6">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-start md:hidden gap-2">
+            <SidebarTrigger className="text-gray-900 dark:text-gray-100">
+              <X className="h-6 w-6" />
+            </SidebarTrigger>
+            <ThemeToggle />
+          </div>
+          <div>
+            <h2 className="font-bold text-2xl text-gray-900 dark:text-white">
+              Dashboard
+            </h2>
+            <p className="text-base text-gray-500 dark:text-gray-400">
+              Management Portal
+            </p>
+          </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-3">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
                     isActive={pathname === item.url}
-                    className="w-full"
+                    size="lg"
+                    className="w-full text-base"
                   >
-                    <Link href={item.url}>
+                    <Link
+                      href={item.url}
+                      onClick={() => {
+                        if (isMobile) setOpenMobile(false);
+                      }}
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </Link>
@@ -94,15 +118,12 @@ export function DashboardSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/dashboard/settings">
-                <Settings className="h-5 w-5" />
-                <span>Settings</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/login">
+              <Link
+                href="/login"
+                onClick={() => {
+                  if (isMobile) setOpenMobile(false);
+                }}
+              >
                 <LogOut className="h-5 w-5" />
                 <span>Logout</span>
               </Link>

@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/lib/supabase";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -187,27 +188,35 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col h-full">
-                {/* Logo in drawer */}
-                <div className="flex items-center space-x-2 mb-8">
-                  <div className="bg-green-600 text-white p-2 rounded-lg">
-                    <span className="font-bold text-lg">AQ</span>
+          {isDashboard ? (
+            <SidebarTrigger className="md:hidden text-gray-900 dark:text-gray-900 hover:text-gray-700">
+              <Menu className="h-8 w-8" />
+            </SidebarTrigger>
+          ) : (
+            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-900 dark:text-gray-900 hover:text-gray-700"
+                >
+                  <Menu className="h-8 w-8" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col h-full">
+                  {/* Logo in drawer */}
+                  <div className="flex items-center space-x-2 mb-8">
+                    <div className="bg-green-600 text-white p-2 rounded-lg">
+                      <span className="font-bold text-lg">AQ</span>
+                    </div>
+                    <span className="font-bold text-xl text-gray-900">
+                      Aidquarters
+                    </span>
                   </div>
-                  <span className="font-bold text-xl text-gray-900">
-                    Aidquarters
-                  </span>
-                </div>
 
-                {/* Navigation Links */}
-                <nav className="flex flex-col space-y-4 flex-1">
-                  {!isDashboard ? (
+                  {/* Navigation Links */}
+                  <nav className="flex flex-col space-y-4 flex-1">
                     <>
                       <Link
                         href={user ? "/dashboard" : "/"}
@@ -245,96 +254,51 @@ export function Header() {
                         Recruitment
                       </Link>
                     </>
-                  ) : (
-                    <>
-                      <Link
-                        href="/dashboard"
-                        className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Overview
-                      </Link>
-                      <Link
-                        href="/dashboard/recruitment"
-                        className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Recruitment
-                      </Link>
-                      <Link
-                        href="/dashboard/payroll"
-                        className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Payroll
-                      </Link>
-                      <Link
-                        href="/dashboard/employees"
-                        className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Employees
-                      </Link>
-                      <Link
-                        href="/dashboard/wallet"
-                        className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Wallet
-                      </Link>
-                      <Link
-                        href="/find-aid"
-                        className="text-gray-700 hover:text-green-600 font-medium py-2 px-4 hover:bg-green-50 rounded-lg transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Recruitment
-                      </Link>
-                    </>
-                  )}
-                </nav>
+                  </nav>
 
-                {/* Auth Buttons at bottom */}
-                <div className="border-t pt-4 mt-4">
-                  {isDashboard || user ? (
-                    <Button
-                      onClick={() => {
-                        handleLogout();
-                        setIsMenuOpen(false);
-                      }}
-                      variant="ghost"
-                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
-                  ) : (
-                    <div className="flex flex-col space-y-2">
+                  {/* Auth Buttons at bottom */}
+                  <div className="border-t pt-4 mt-4">
+                    {isDashboard || user ? (
                       <Button
-                        asChild
-                        variant="outline"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                        variant="ghost"
+                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
-                        <Link href="/login">
-                          <LogIn className="h-4 w-4 mr-2" />
-                          Login
-                        </Link>
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
                       </Button>
-                      <Button
-                        asChild
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Link href="/#services">
-                          <UserPlus className="h-4 w-4 mr-2" />
-                          Sign Up
-                        </Link>
-                      </Button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex flex-col space-y-2">
+                        <Button
+                          asChild
+                          variant="outline"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Link href="/login">
+                            <LogIn className="h-4 w-4 mr-2" />
+                            Login
+                          </Link>
+                        </Button>
+                        <Button
+                          asChild
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Link href="/#services">
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Sign Up
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          )}
         </div>
       </div>
     </header>

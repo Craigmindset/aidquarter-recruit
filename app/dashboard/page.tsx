@@ -41,6 +41,7 @@ export default function DashboardOverview() {
   const roleTitle = role
     ? role.charAt(0).toUpperCase() + role.slice(1)
     : "Applicant";
+  const [greetingName, setGreetingName] = useState(displayName);
 
   useEffect(() => {
     if (!user) return;
@@ -48,12 +49,18 @@ export default function DashboardOverview() {
       try {
         const { data, error } = await supabase
           .from("staff_profile")
-          .select("vet_fee, verified, ninpass, idpass, facepass")
+          .select(
+            "first_name,last_name, vet_fee, verified, ninpass, idpass, facepass",
+          )
           .eq("user_id", user.id)
           .single();
         if (error) {
           setShowVetting(true);
           return;
+        }
+        if (data?.first_name) {
+          const first = String(data.first_name).trim();
+          if (first) setGreetingName(first);
         }
         if (data?.vet_fee === false) {
           setShowVetting(true);
@@ -192,11 +199,8 @@ export default function DashboardOverview() {
       </AlertDialog>
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome back, John!
+          Welcome back, {greetingName}!
         </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Welcome, {displayName}.
-        </p>
       </div>
 
       {/* Stats Grid */}
@@ -243,7 +247,18 @@ export default function DashboardOverview() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <Card className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors dark:bg-gray-900 dark:border-gray-700">
+              <Card
+                className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors dark:bg-gray-900 dark:border-gray-700"
+                onClick={() => router.push("/dashboard/settings")}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    router.push("/dashboard/settings");
+                  }
+                }}
+              >
                 <div className="text-center">
                   <Users className="h-8 w-8 mx-auto mb-2 text-green-600 dark:text-green-400" />
                   <p className="font-medium dark:text-white">Update Profile</p>
