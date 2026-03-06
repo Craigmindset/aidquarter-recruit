@@ -409,8 +409,8 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen px-2 sm:px-4 md:px-6 py-10 bg-gray-50 dark:bg-gray-950">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen px-2 sm:px-4 md:px-6 py-10 bg-gray-50 dark:bg-gray-950 min-w-0 overflow-x-hidden">
+      <div className="max-w-4xl mx-auto space-y-6 min-w-0">
         <Card className="mt-6 shadow-xl border-0 dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <CardTitle>Profile Image</CardTitle>

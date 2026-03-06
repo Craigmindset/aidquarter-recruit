@@ -89,15 +89,15 @@ export default function PayrollPage() {
 
   const totalMonthlyPayroll = employees.reduce(
     (sum, emp) => sum + emp.salary,
-    0
+    0,
   );
   const pendingPayments = employees.filter(
-    (emp) => emp.status === "Pending"
+    (emp) => emp.status === "Pending",
   ).length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 min-w-0 overflow-x-hidden">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Payroll Management
@@ -106,7 +106,7 @@ export default function PayrollPage() {
             Manage staff payments and view payment history
           </p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
+        <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
           <CreditCard className="h-4 w-4 mr-2" />
           Pay All Staff
         </Button>
@@ -171,9 +171,9 @@ export default function PayrollPage() {
             {employees.map((employee) => (
               <div
                 key={employee.id}
-                className="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg"
+                className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 border dark:border-gray-700 rounded-lg"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 min-w-0">
                   <Avatar>
                     <AvatarImage
                       src={employee.image || "/placeholder.svg"}
@@ -196,7 +196,7 @@ export default function PayrollPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-4">
                   <div className="text-right">
                     <p className="font-medium text-gray-900 dark:text-white">
                       ₦{employee.salary.toLocaleString()}
@@ -233,14 +233,14 @@ export default function PayrollPage() {
       {/* Payment History */}
       <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="dark:text-white">Payment History</CardTitle>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                 <Input
                   placeholder="Search payments..."
-                  className="pl-10 w-64 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+                  className="pl-10 w-full sm:w-64 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
                 />
               </div>
               <Button
@@ -261,42 +261,46 @@ export default function PayrollPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="dark:border-gray-700">
-                <TableHead className="dark:text-gray-400">Staff Name</TableHead>
-                <TableHead className="dark:text-gray-400">Amount</TableHead>
-                <TableHead className="dark:text-gray-400">
-                  Payment Date
-                </TableHead>
-                <TableHead className="dark:text-gray-400">Method</TableHead>
-                <TableHead className="dark:text-gray-400">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paymentHistory.map((payment) => (
-                <TableRow key={payment.id} className="dark:border-gray-700">
-                  <TableCell className="font-medium dark:text-white">
-                    {payment.staffName}
-                  </TableCell>
-                  <TableCell className="dark:text-gray-300">
-                    ₦{payment.amount.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="dark:text-gray-300">
-                    {new Date(payment.paymentDate).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="dark:text-gray-300">
-                    {payment.method}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300">
-                      {payment.status}
-                    </Badge>
-                  </TableCell>
+          <div className="relative w-full overflow-x-auto">
+            <Table className="min-w-[680px]">
+              <TableHeader>
+                <TableRow className="dark:border-gray-700">
+                  <TableHead className="dark:text-gray-400">
+                    Staff Name
+                  </TableHead>
+                  <TableHead className="dark:text-gray-400">Amount</TableHead>
+                  <TableHead className="dark:text-gray-400">
+                    Payment Date
+                  </TableHead>
+                  <TableHead className="dark:text-gray-400">Method</TableHead>
+                  <TableHead className="dark:text-gray-400">Status</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {paymentHistory.map((payment) => (
+                  <TableRow key={payment.id} className="dark:border-gray-700">
+                    <TableCell className="font-medium dark:text-white">
+                      {payment.staffName}
+                    </TableCell>
+                    <TableCell className="dark:text-gray-300">
+                      ₦{payment.amount.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="dark:text-gray-300">
+                      {new Date(payment.paymentDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="dark:text-gray-300">
+                      {payment.method}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300">
+                        {payment.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

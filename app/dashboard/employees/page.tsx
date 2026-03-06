@@ -118,8 +118,8 @@ export default function EmployeesPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 min-w-0 overflow-x-hidden">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Employee Management
@@ -128,7 +128,7 @@ export default function EmployeesPage() {
             Manage your current household staff
           </p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
+        <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
           Add New Employee
         </Button>
       </div>
@@ -136,7 +136,7 @@ export default function EmployeesPage() {
       {/* Search and Filter */}
       <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardContent className="pt-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <Input
@@ -156,7 +156,7 @@ export default function EmployeesPage() {
       </Card>
 
       {/* Employee Stats */}
-      <div className="grid md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <Card className="dark:bg-gray-800 dark:border-gray-700">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">

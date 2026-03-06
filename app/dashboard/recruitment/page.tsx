@@ -35,8 +35,8 @@ export default function RecruitmentPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 min-w-0 overflow-x-hidden">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Recruitment Management
@@ -45,14 +45,14 @@ export default function RecruitmentPage() {
             Manage your selected candidates and schedule interviews
           </p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
+        <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
           Find More Candidates
         </Button>
       </div>
 
       {/* Selected Candidates */}
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Selected Candidates
           </h2>
@@ -189,7 +189,7 @@ export default function RecruitmentPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
               <div className="flex items-center space-x-4">
                 <Avatar>
                   <AvatarImage src="/placeholder.svg?height=40&width=40" />
@@ -204,7 +204,7 @@ export default function RecruitmentPage() {
                   </p>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="text-left sm:text-right">
                 <p className="font-medium text-gray-900 dark:text-white">
                   Tomorrow, 2:00 PM
                 </p>
@@ -215,7 +215,7 @@ export default function RecruitmentPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="dark:border-gray-700 dark:hover:bg-gray-700"
+                className="w-full sm:w-auto dark:border-gray-700 dark:hover:bg-gray-700"
               >
                 Reschedule
               </Button>

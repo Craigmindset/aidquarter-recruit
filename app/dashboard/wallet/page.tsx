@@ -104,8 +104,8 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 min-w-0 overflow-x-hidden">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Wallet Management
@@ -115,7 +115,7 @@ export default function WalletPage() {
           </p>
         </div>
         <Button
-          className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800"
+          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800"
           onClick={() => setShowTopUpDialog(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -124,7 +124,7 @@ export default function WalletPage() {
       </div>
 
       {/* Wallet Overview */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-6 min-w-0">
         <Card className="md:col-span-2 dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 dark:text-white">
@@ -245,7 +245,7 @@ export default function WalletPage() {
           <CardTitle className="dark:text-white">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 min-w-0">
             <Button
               variant="outline"
               className="h-20 flex-col space-y-2 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -297,62 +297,69 @@ export default function WalletPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="dark:border-gray-700">
-                <TableHead className="dark:text-gray-400">Type</TableHead>
-                <TableHead className="dark:text-gray-400">
-                  Description
-                </TableHead>
-                <TableHead className="dark:text-gray-400">Amount</TableHead>
-                <TableHead className="dark:text-gray-400">Date</TableHead>
-                <TableHead className="dark:text-gray-400">Status</TableHead>
-                <TableHead className="dark:text-gray-400">Reference</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id} className="dark:border-gray-700">
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {transaction.type === "credit" ? (
-                        <ArrowDownLeft className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      ) : (
-                        <ArrowUpRight className="h-4 w-4 text-red-600 dark:text-red-400" />
-                      )}
-                      <span className="capitalize dark:text-gray-300">
-                        {transaction.type}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="dark:text-gray-300">
-                    {transaction.description}
-                  </TableCell>
-                  <TableCell
-                    className={
-                      transaction.type === "credit"
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    }
-                  >
-                    {transaction.type === "credit" ? "+" : "-"}₦
-                    {transaction.amount.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="dark:text-gray-300">
-                    {new Date(transaction.date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300">
-                      {transaction.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-mono text-sm dark:text-gray-300">
-                    {transaction.reference}
-                  </TableCell>
+          <div className="relative w-full overflow-x-auto">
+            <Table className="min-w-[720px]">
+              <TableHeader>
+                <TableRow className="dark:border-gray-700">
+                  <TableHead className="dark:text-gray-400">Type</TableHead>
+                  <TableHead className="dark:text-gray-400">
+                    Description
+                  </TableHead>
+                  <TableHead className="dark:text-gray-400">Amount</TableHead>
+                  <TableHead className="dark:text-gray-400">Date</TableHead>
+                  <TableHead className="dark:text-gray-400">Status</TableHead>
+                  <TableHead className="dark:text-gray-400">
+                    Reference
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {transactions.map((transaction) => (
+                  <TableRow
+                    key={transaction.id}
+                    className="dark:border-gray-700"
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {transaction.type === "credit" ? (
+                          <ArrowDownLeft className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        ) : (
+                          <ArrowUpRight className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        )}
+                        <span className="capitalize dark:text-gray-300">
+                          {transaction.type}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="dark:text-gray-300">
+                      {transaction.description}
+                    </TableCell>
+                    <TableCell
+                      className={
+                        transaction.type === "credit"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }
+                    >
+                      {transaction.type === "credit" ? "+" : "-"}₦
+                      {transaction.amount.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="dark:text-gray-300">
+                      {new Date(transaction.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-300">
+                        {transaction.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-sm dark:text-gray-300">
+                      {transaction.reference}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
