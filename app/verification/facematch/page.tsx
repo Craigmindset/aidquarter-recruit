@@ -30,6 +30,7 @@ export default function FaceMatchPage() {
     try {
       const v = videoRef.current;
       let url: string | null = null;
+      let liveOk = false;
       if (v && user?.id) {
         const canvas = document.createElement("canvas");
         canvas.width = v.videoWidth || 640;
@@ -55,22 +56,42 @@ export default function FaceMatchPage() {
           }
         }
       }
+      try {
+        if (url) {
+          const lr = await fetch("/api/qoreid/liveness", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ imageUrl: url }),
+          });
+          if (lr.ok) {
+            const l = await lr.json();
+            const d: any = l?.data || {};
+            const score = Number(d.score ?? d.livenessScore ?? 0);
+            const isLive = Boolean(d.isLive ?? score >= 0.5);
+            liveOk = isLive;
+          }
+        }
+      } catch {}
       if (user?.id) {
         await supabase
           .from("staff_profile")
-          .update({ facialvet: url, facepass: true })
+          .update({ facialvet: url, facepass: liveOk })
           .eq("user_id", user.id);
         const { data } = await supabase
           .from("staff_profile")
           .select("vet_fee, ninpass, idpass, facepass")
           .eq("user_id", user.id)
           .single();
-        if (data?.vet_fee && data?.ninpass && data?.idpass && data?.facepass) {
+        if (data?.vet_fee && data?.ninpass && data?.idpass && liveOk) {
           await supabase
             .from("staff_profile")
             .update({ verified: true })
             .eq("user_id", user.id);
         }
+      }
+      if (!liveOk) {
+        setVerifying(false);
+        return;
       }
     } catch {}
     try {
