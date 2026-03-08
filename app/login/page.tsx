@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   return (
@@ -36,6 +37,16 @@ function LoginPageBody() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    if (nextPath && nextPath.startsWith("/")) {
+      router.replace(nextPath);
+    } else {
+      router.replace("/dashboard");
+    }
+  }, [user, nextPath, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
