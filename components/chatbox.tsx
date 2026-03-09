@@ -212,12 +212,12 @@ export default function ChatBox() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center"
+        className="fixed bottom-2 right-3 md:bottom-6 md:right-6 bg-green-600 hover:bg-green-700 text-white rounded-full p-3 md:p-3 shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center"
       >
         {isOpen ? (
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5 md:h-5 md:w-5" />
         ) : (
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-5 w-5 md:h-5 md:w-5" />
         )}
       </button>
     </>
