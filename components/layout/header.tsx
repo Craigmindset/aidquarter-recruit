@@ -17,6 +17,8 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith("/dashboard");
+  const isVerification = pathname?.startsWith("/verification");
+  const isDashboardLike = isDashboard || isVerification;
   const isLogin = pathname?.startsWith("/login");
   const { user, signOut } = useAuth();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
@@ -79,9 +81,9 @@ export function Header() {
           {/* Logo */}
           <Link
             href={
-              user && !isDashboard
+              user && !isDashboardLike
                 ? "/dashboard"
-                : isDashboard
+                : isDashboardLike
                   ? "/dashboard"
                   : "/"
             }
@@ -93,8 +95,8 @@ export function Header() {
             <span className="font-bold text-xl text-gray-900">Aidquarters</span>
           </Link>
 
-          {/* Desktop Navigation - Hide on dashboard */}
-          {!isDashboard && (
+          {/* Desktop Navigation - Hide on dashboard-like pages */}
+          {!isDashboardLike && (
             <nav className="hidden md:flex items-center space-x-8">
               <Link
                 href={user ? "/dashboard" : "/"}
@@ -124,8 +126,8 @@ export function Header() {
             </nav>
           )}
 
-          {/* Dashboard Navigation - Show only on dashboard */}
-          {isDashboard && (
+          {/* Dashboard Navigation - Show on dashboard-like pages */}
+          {isDashboardLike && (
             <nav className="hidden md:flex items-center space-x-8">
               <Link
                 href="/"
@@ -188,7 +190,7 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          {isDashboard ? (
+          {isDashboardLike ? (
             <SidebarTrigger className="md:hidden text-gray-900 dark:text-gray-900 hover:text-gray-700">
               <Menu className="h-8 w-8" />
             </SidebarTrigger>

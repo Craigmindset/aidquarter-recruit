@@ -26,6 +26,9 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 const menuItems = [
   {
@@ -63,6 +66,32 @@ const menuItems = [
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+  const { user } = useAuth();
+  const [isVerified, setIsVerified] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+    const run = async () => {
+      if (!user?.id) {
+        setIsVerified(false);
+        return;
+      }
+      try {
+        const { data } = await supabase
+          .from("staff_profile")
+          .select("verified")
+          .eq("user_id", user.id)
+          .single();
+        if (!ignore) setIsVerified(Boolean(data?.verified));
+      } catch {
+        if (!ignore) setIsVerified(false);
+      }
+    };
+    run();
+    return () => {
+      ignore = true;
+    };
+  }, [user?.id]);
 
   return (
     <Sidebar className="border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
@@ -93,19 +122,26 @@ export function DashboardSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.url}
+                    isActive={pathname === item.url && isVerified}
                     size="lg"
-                    className="w-full text-base"
+                    className={`w-full text-base ${!isVerified ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
-                    <Link
-                      href={item.url}
-                      onClick={() => {
-                        if (isMobile) setOpenMobile(false);
-                      }}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </Link>
+                    {isVerified ? (
+                      <Link
+                        href={item.url}
+                        onClick={() => {
+                          if (isMobile) setOpenMobile(false);
+                        }}
+                      >
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </Link>
+                    ) : (
+                      <button type="button">
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </button>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
