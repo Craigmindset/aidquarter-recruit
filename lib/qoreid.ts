@@ -1,9 +1,13 @@
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
-export async function getQoreIdToken(): Promise<string> {
+export async function getQoreIdToken(options?: {
+  force?: boolean;
+  ignoreEnv?: boolean;
+}): Promise<string> {
+  const { force = false, ignoreEnv = false } = options || {};
   const now = Date.now();
   const envToken = process.env.QOREID_ACCESS_TOKEN;
-  if (envToken) {
+  if (!force && !ignoreEnv && envToken) {
     const envExpSec = Number(
       process.env.QOREID_ACCESS_TOKEN_EXPIRES_IN || 3600,
     );
@@ -13,7 +17,7 @@ export async function getQoreIdToken(): Promise<string> {
     cachedToken = { token: tokenOnly, expiresAt: now + envExpSec * 1000 };
     return tokenOnly;
   }
-  if (cachedToken && cachedToken.expiresAt > now + 60_000) {
+  if (!force && cachedToken && cachedToken.expiresAt > now + 60_000) {
     return cachedToken.token;
   }
   const clientId = process.env.QOREID_CLIENT_ID;

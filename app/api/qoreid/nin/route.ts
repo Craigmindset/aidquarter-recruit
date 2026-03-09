@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     if (phone) payload.phone = phone;
     if (email) payload.email = email;
     if (gender) payload.gender = gender;
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -41,6 +41,20 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify(payload),
     });
+    if (res.status === 401) {
+      try {
+        const token2 = await getQoreIdToken({ force: true, ignoreEnv: true });
+        res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            accept: "application/json",
+            authorization: `Bearer ${token2}`,
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch {}
+    }
     if (!res.ok) {
       let detail: any = null;
       let text: string | null = null;

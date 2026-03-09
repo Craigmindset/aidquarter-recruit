@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 type NinReturn = {
+  nin: string;
   firstName: string;
   lastName: string;
   dob: string;
@@ -89,6 +91,7 @@ export default function DocumentMatchPage() {
           n.contactAddress ||
           "";
         const payload: NinReturn = {
+          nin,
           firstName: String(n.firstname || n.firstName || "").trim(),
           lastName: String(n.lastname || n.lastName || "").trim(),
           dob: String(birth || "").trim(),
@@ -147,12 +150,16 @@ export default function DocumentMatchPage() {
       await supabase
         .from("staff_profile")
         .update({
+          nin: ret.nin,
           dob: iso,
           gender,
           address: ret.address || null,
           ninpass: true,
         })
         .eq("user_id", user.id);
+    } catch {}
+    try {
+      toast({ title: "NIN saved", description: "Proceeding to ID match..." });
     } catch {}
     router.push("/verification/idmatch");
   };
@@ -221,6 +228,10 @@ export default function DocumentMatchPage() {
           {matchVerified && returned && (
             <div className="grid md:grid-cols-2 gap-4">
               <div className="grid gap-1">
+                <Label>NIN</Label>
+                <Input value={returned.nin} disabled />
+              </div>
+              <div className="grid gap-1">
                 <Label>First Name</Label>
                 <Input value={returned.firstName} disabled />
               </div>
@@ -247,7 +258,7 @@ export default function DocumentMatchPage() {
             <Button
               disabled={!matchVerified}
               onClick={() => handleConfirm()}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 transition-opacity active:opacity-70 disabled:opacity-50"
             >
               Confirm
             </Button>
