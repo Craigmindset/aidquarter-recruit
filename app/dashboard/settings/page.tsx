@@ -470,6 +470,7 @@ export default function SettingsPage() {
                     <Input
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
+                      disabled
                     />
                   </div>
                   <div className="grid gap-1">
@@ -477,6 +478,7 @@ export default function SettingsPage() {
                     <Input
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
+                      disabled
                     />
                   </div>
                   <div className="grid gap-1">
@@ -485,6 +487,7 @@ export default function SettingsPage() {
                       placeholder="YYYY-MM-DD"
                       value={dob ?? ""}
                       onChange={(e) => setDob(e.target.value)}
+                      disabled
                     />
                   </div>
                   <div className="grid gap-1">
@@ -493,6 +496,7 @@ export default function SettingsPage() {
                       placeholder="male/female"
                       value={gender ?? ""}
                       onChange={(e) => setGender(e.target.value)}
+                      disabled
                     />
                   </div>
                   <div className="grid gap-1 md:col-span-2">
