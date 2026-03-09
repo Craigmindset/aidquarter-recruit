@@ -117,7 +117,22 @@ export default function FindAidPage() {
           id: row.user_id,
           name: (row.first_name ?? "").trim() || "Unnamed",
           image: row.profile_image ?? "/placeholder.svg?height=200&width=200",
-          status: row.status ?? "Available to work",
+          status: (() => {
+            const v: any = row.status;
+            if (typeof v === "boolean")
+              return v === false ? "Employed" : "Available to work";
+            const s = String(v ?? "")
+              .trim()
+              .toLowerCase();
+            if (
+              s === "false" ||
+              s === "employed" ||
+              s === "not available" ||
+              s === "unavailable"
+            )
+              return "Employed";
+            return "Available to work";
+          })(),
           position: row.role ?? "",
           salaryRange: row.salary_range ?? "",
           currentLocation: row.state ?? "",
@@ -333,7 +348,9 @@ export default function FindAidPage() {
                         height={200}
                         className="w-full h-32 md:h-48 object-cover rounded-lg"
                       />
-                      <Badge className="absolute top-2 right-2 bg-green-100 text-green-800 hover:bg-green-100 text-[10px] md:text-sm px-1 md:px-3 py-0 md:py-1 whitespace-nowrap">
+                      <Badge
+                        className={`absolute top-2 right-2 rounded-full font-semibold shadow ${worker.status === "Available to work" ? "bg-green-600 text-white" : "bg-gray-500 text-white"} text-[10px] md:text-sm px-2 md:px-3 py-0.5 md:py-1 whitespace-nowrap`}
+                      >
                         {worker.status}
                       </Badge>
                     </div>
@@ -427,7 +444,9 @@ export default function FindAidPage() {
                   height={300}
                   className="w-full h-40 object-cover rounded-lg"
                 />
-                <Badge className="absolute top-4 right-4 bg-green-100 text-green-800 hover:bg-green-100 text-sm px-3 py-1">
+                <Badge
+                  className={`absolute top-4 right-4 rounded-full font-semibold shadow ${selectedWorker.status === "Available to work" ? "bg-green-600 text-white" : "bg-gray-500 text-white"} text-sm px-3 py-1`}
+                >
                   {selectedWorker.status}
                 </Badge>
               </div>
