@@ -66,7 +66,7 @@ const menuItems = [
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
@@ -154,15 +154,19 @@ export function DashboardSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link
-                href="/login"
-                onClick={() => {
-                  if (isMobile) setOpenMobile(false);
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await signOut();
+                  } finally {
+                    if (isMobile) setOpenMobile(false);
+                  }
                 }}
               >
                 <LogOut className="h-5 w-5" />
                 <span>Logout</span>
-              </Link>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 
 export default function IDMatchPage() {
   const router = useRouter();
@@ -39,6 +40,11 @@ export default function IDMatchPage() {
           .from("staff_profile")
           .update({ id_upload: url, idpass: true })
           .eq("user_id", user.id);
+      }
+      if (waiver) {
+        toast({ title: "your id upload has been inputted as none" });
+      } else if (file && url) {
+        toast({ title: "Your id upload was successful" });
       }
     } catch {}
     router.push("/verification/facematch");
@@ -73,7 +79,7 @@ export default function IDMatchPage() {
                 className="text-sm text-gray-700 underline w-fit"
                 onClick={() => setWaiver(true)}
               >
-                I don&apos;t have any current, click
+                I don&apos;t have any currently
               </button>
             )}
           </div>
@@ -82,7 +88,7 @@ export default function IDMatchPage() {
             <Button
               disabled={!file && !waiver}
               onClick={handleConfirm}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 transition-opacity active:opacity-70 disabled:opacity-50"
             >
               Confirm
             </Button>

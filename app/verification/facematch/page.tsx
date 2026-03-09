@@ -6,14 +6,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import Lottie from "react-lottie-player";
 
 export default function FaceMatchPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [started, setStarted] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [faceAnim, setFaceAnim] = useState<any | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    fetch("/Face%20Scan.json")
+      .then((r) => r.json())
+      .then(setFaceAnim)
+      .catch(() => {});
+  }, []);
 
   const startCapture = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -105,6 +114,16 @@ export default function FaceMatchPage() {
     <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gray-50">
       <Card className="w-full max-w-lg shadow-xl border-0">
         <CardHeader>
+          <div className="flex justify-center mb-2">
+            {faceAnim && (
+              <Lottie
+                loop
+                play
+                animationData={faceAnim}
+                style={{ width: 120, height: 120 }}
+              />
+            )}
+          </div>
           <CardTitle className="text-center">Facial Verification</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
