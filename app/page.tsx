@@ -83,7 +83,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative bg-transparent">
               <Image
                 src="recruit-hero.png"
                 alt="Professional household staff"
@@ -272,13 +272,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative bg-transparent">
               <Image
-                src="/aid-verify.png"
+                src="/worker-img.png"
                 alt="Safety and trust"
-                width={450}
+                width={400}
                 height={400}
-                className="rounded-2xl shadow-xl mx-auto  w-full max-w-sm md:max-w-md"
+                className="rounded-2xl md:ml-10 w-full max-w-sm md:max-w-none md:mt-10"
+                priority
               />
             </div>
           </div>

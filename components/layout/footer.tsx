@@ -15,8 +15,8 @@ export function Footer() {
               <span className="font-bold text-xl">Aidquarters</span>
             </div>
             <p className="text-gray-400">
-              Connecting families with trusted, vetted household professionals
-              across Nigeria.
+              Opening doors for household professionals to find trusted job
+              opportunities with families across Nigeria.
             </p>
           </div>
 
