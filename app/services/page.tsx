@@ -7,8 +7,9 @@ export default function ServicesPage() {
   const services = [
     {
       title: "Housekeepers",
+      role: "housekeeper",
       description: "Professional cleaning and household management services",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/nanny-img.jpg?height=300&width=400",
       features: [
         "Deep cleaning and maintenance",
         "Laundry and ironing services",
@@ -20,8 +21,9 @@ export default function ServicesPage() {
     },
     {
       title: "Nannies",
+      role: "nanny",
       description: "Qualified childcare professionals for your family",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/House_help.jpg?height=300&width=400",
       features: [
         "Child supervision and care",
         "Educational activities",
@@ -33,9 +35,10 @@ export default function ServicesPage() {
     },
     {
       title: "Drivers",
+      role: "driver",
       description:
         "Reliable transportation services for personal and family needs",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/driver-img.jpg?height=300&width=400",
       features: [
         "Personal transportation",
         "School runs and pickups",
@@ -47,9 +50,10 @@ export default function ServicesPage() {
     },
     {
       title: "Care Giver",
+      role: "caregiver",
       description:
         "Compassionate and professional elderly and patient care services",
-      image: "/placeholder.svg?height=300&width=400",
+      image: "/care-giver.jpg?height=300&width=400",
       features: [
         "Elderly care and companionship",
         "Patient care assistance",
@@ -64,12 +68,11 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-blue-50 py-16">
-        <div className="container mx-auto px-4 lg:px-6 text-center">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Our Services
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+
+      <section className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
+        <div className="container mx-auto px-4 lg:px-6 text-center mt-10">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-4">Our Services</h1>
+          <p className="text-xl text-green-100 max-w-3xl mx-auto">
             Comprehensive household staffing solutions tailored to meet your
             family's unique needs
           </p>
@@ -91,15 +94,15 @@ export default function ServicesPage() {
                   <Image
                     src={service.image || "/placeholder.svg"}
                     alt={service.title}
-                    width={400}
-                    height={300}
-                    className="rounded-2xl shadow-xl w-full"
+                    width={360}
+                    height={240}
+                    className="rounded-2xl shadow-lg mx-auto"
                   />
                 </div>
 
                 <div
                   className={`space-y-6 ${
-                    index % 2 === 1 ? "lg:col-start-1" : ""
+                    index % 2 === 1 ? "lg:col-start-1 lg:pl-10 xl:pl-16" : ""
                   }`}
                 >
                   <div>
@@ -109,11 +112,6 @@ export default function ServicesPage() {
                     <p className="text-lg text-gray-600 mb-6">
                       {service.description}
                     </p>
-                    <div className="bg-green-50 p-4 rounded-lg mb-6">
-                      <p className="text-green-800 font-semibold">
-                        Starting from {service.priceRange}
-                      </p>
-                    </div>
                   </div>
 
                   <div className="space-y-3">
@@ -133,14 +131,9 @@ export default function ServicesPage() {
 
                   <div className="flex flex-col sm:flex-row gap-4 pt-4">
                     <Button asChild className="bg-green-600 hover:bg-green-700">
-                      <Link
-                        href={`/find-aid?service=${service.title.toLowerCase()}`}
-                      >
-                        Find {service.title}
+                      <Link href={`/signup/info?role=${service.role}`}>
+                        Register
                       </Link>
-                    </Button>
-                    <Button asChild variant="outline">
-                      <Link href="/contact">Get Quote</Link>
                     </Button>
                   </div>
                 </div>
@@ -167,9 +160,6 @@ export default function ServicesPage() {
               className="bg-green-600 hover:bg-green-700"
             >
               <Link href="/find-aid">Browse Workers</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/recruit">Post a Job</Link>
             </Button>
           </div>
         </div>

@@ -335,11 +335,11 @@ export default function HomePage() {
       <section className="py-20 bg-green-600">
         <div className="container mx-auto px-4 lg:px-6 text-center">
           <h2 className="text-2xl lg:text-4xl font-bold text-white mb-6">
-            Ready to Find Your Perfect Household Staff?
+            Ready to Find Your Next Household Job?
           </h2>
           <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of satisfied families who trust Aidquarters for their
-            household staffing needs
+            Join trusted workers on Aidquarters and connect with families
+            looking for reliable housekeepers, nannies, and drivers.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
