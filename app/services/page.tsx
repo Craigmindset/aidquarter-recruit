@@ -9,7 +9,7 @@ export default function ServicesPage() {
       title: "Housekeepers",
       role: "housekeeper",
       description: "Professional cleaning and household management services",
-      image: "/nanny-img.jpg?height=300&width=400",
+      image: "/nanny-img.jpg",
       features: [
         "Deep cleaning and maintenance",
         "Laundry and ironing services",
@@ -23,7 +23,7 @@ export default function ServicesPage() {
       title: "Nannies",
       role: "nanny",
       description: "Qualified childcare professionals for your family",
-      image: "/House_help.jpg?height=300&width=400",
+      image: "/House_help.jpg",
       features: [
         "Child supervision and care",
         "Educational activities",
@@ -38,7 +38,7 @@ export default function ServicesPage() {
       role: "driver",
       description:
         "Reliable transportation services for personal and family needs",
-      image: "/driver-img.jpg?height=300&width=400",
+      image: "/driver-img.jpg",
       features: [
         "Personal transportation",
         "School runs and pickups",
@@ -53,7 +53,7 @@ export default function ServicesPage() {
       role: "caregiver",
       description:
         "Compassionate and professional elderly and patient care services",
-      image: "/care-giver.jpg?height=300&width=400",
+      image: "/care-giver.jpg",
       features: [
         "Elderly care and companionship",
         "Patient care assistance",

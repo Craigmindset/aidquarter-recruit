@@ -116,7 +116,7 @@ export default function FindAidPage() {
         (resultData as StaffProfileRow[] | null)?.map((row) => ({
           id: row.user_id,
           name: (row.first_name ?? "").trim() || "Unnamed",
-          image: row.profile_image ?? "/placeholder.svg?height=200&width=200",
+          image: row.profile_image ?? "/placeholder.svg",
           status: (() => {
             const v: any = row.status;
             if (typeof v === "boolean")

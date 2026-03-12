@@ -101,7 +101,7 @@ export default function WhatsNewPage() {
                   "Our new verification system now includes biometric verification, enhanced criminal background checks, and real-time reference validation. This ensures even higher quality and safety standards for all our registered workers.",
                 sub_content:
                   "We've upgraded our verification process with biometric checks and real-time validation.",
-                image: "/placeholder.svg?height=300&width=500",
+                image: "/placeholder.svg",
                 created_at: null,
               },
             ]);
