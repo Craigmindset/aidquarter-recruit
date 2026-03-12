@@ -270,28 +270,16 @@ export default function WhatsNewPage() {
         </div>
       </section>
 
-      {/* Newsletter Signup */}
-      <section className="py-16 bg-green-600">
+      {/* Simple Banner */}
+      <section className="py-10 bg-gradient-to-r from-green-600 to-blue-600 text-white">
         <div className="container mx-auto px-4 lg:px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Stay in the Loop
+          <h2 className="text-2xl font-semibold mb-2">
+            Thanks for staying updated
           </h2>
-          <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            Subscribe to our newsletter to get the latest updates, features, and
-            announcements delivered to your inbox
+          <p className="text-green-100 max-w-2xl mx-auto">
+            We’re constantly improving Aidquarters to serve you better. Check
+            back often for new features and announcements.
           </p>
-          <div className="max-w-md mx-auto">
-            <div className="flex gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white"
-              />
-              <Button className="bg-white text-green-600 hover:bg-gray-100 px-6">
-                Subscribe
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -312,9 +300,6 @@ export default function WhatsNewPage() {
               className="bg-green-600 hover:bg-green-700"
             >
               <Link href="/find-aid">Find Workers</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/recruit">Post a Job</Link>
             </Button>
           </div>
         </div>

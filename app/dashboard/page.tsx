@@ -198,7 +198,7 @@ export default function DashboardOverview() {
         </AlertDialogContent>
       </AlertDialog>
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
           Welcome back, {greetingName}!
         </h1>
       </div>
