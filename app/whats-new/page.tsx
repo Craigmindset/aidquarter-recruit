@@ -27,6 +27,9 @@ type Post = {
   created_at?: string | null;
 };
 
+const CACHE_KEY = "whats-new:blog-posts:v1";
+const CACHE_TTL_MS = 30 * 60 * 1000;
+
 export default function WhatsNewPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [open, setOpen] = useState(false);
@@ -36,26 +39,59 @@ export default function WhatsNewPage() {
   useEffect(() => {
     let ignore = false;
     const run = async () => {
+      let hadCache = false;
       try {
+        if (typeof window !== "undefined") {
+          try {
+            const raw = localStorage.getItem(CACHE_KEY);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (
+                parsed &&
+                Array.isArray(parsed.data) &&
+                typeof parsed.ts === "number" &&
+                Date.now() - parsed.ts <= CACHE_TTL_MS
+              ) {
+                if (!ignore) {
+                  setPosts(parsed.data);
+                  setLoading(false);
+                  hadCache = true;
+                }
+              }
+            }
+          } catch {}
+        }
+
+        if (ignore || hadCache) return;
+
         const { data, error } = await supabase
           .from("blog_posts")
           .select("*")
           .order("created_at", { ascending: false });
+
         if (!ignore) {
           if (!error && data && Array.isArray(data) && data.length > 0) {
-            setPosts(
-              data.map((d: any) => ({
-                id: d.id ?? undefined,
-                category: d.category ?? null,
-                header: d.header ?? null,
-                sub_header: d.sub_header ?? null,
-                content: d.content ?? null,
-                sub_content: d.sub_content ?? null,
-                image: d.image_url ?? null,
-                created_at: d.created_at ?? null,
-              })),
-            );
-          } else {
+            const mapped: Post[] = data.map((d: any) => ({
+              id: d.id ?? undefined,
+              category: d.category ?? null,
+              header: d.header ?? null,
+              sub_header: d.sub_header ?? null,
+              content: d.content ?? null,
+              sub_content: d.sub_content ?? null,
+              image: d.image_url ?? null,
+              created_at: d.created_at ?? null,
+            }));
+            setPosts(mapped);
+            const nowTs = Date.now();
+            if (typeof window !== "undefined") {
+              try {
+                localStorage.setItem(
+                  CACHE_KEY,
+                  JSON.stringify({ ts: nowTs, data: mapped }),
+                );
+              } catch {}
+            }
+          } else if (!hadCache) {
             setPosts([
               {
                 category: "Security",
@@ -286,7 +322,7 @@ export default function WhatsNewPage() {
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[92vw] md:w-[80vw] max-w-3xl max-h-[92vh] sm:rounded-xl p-0 overflow-hidden bg-transparent border-0 md:[&>button]:opacity-100 md:[&>button]:bg-white md:[&>button]:text-gray-900 md:[&>button]:rounded-full md:[&>button]:p-2 md:[&>button]:shadow md:[&>button]:border md:[&>button]:border-gray-200 md:[&>button>svg]:h-6 md:[&>button>svg]:w-6">
+        <DialogContent className="w-[92vw] md:w-[80vw] max-w-3xl max-h-[92vh] sm:rounded-xl p-0 overflow-hidden bg-transparent border-0 [&>button]:opacity-100 [&>button]:bg-white dark:[&>button]:bg-gray-800 [&>button]:text-gray-900 dark:[&>button]:text-white [&>button]:rounded-full [&>button]:p-2 [&>button]:shadow [&>button]:border [&>button]:border-gray-200 dark:[&>button]:border-gray-700 [&>button>svg]:h-6 [&>button>svg]:w-6">
           <div className="h-full w-full bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-3 md:p-5">
             <div className="rounded-lg bg-white/90 dark:bg-gray-900/80 backdrop-blur border border-white/60 dark:border-gray-700 shadow-2xl overflow-hidden">
               <div className="h-1 w-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500" />
@@ -321,7 +357,7 @@ export default function WhatsNewPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                     </div>
                   ) : null}
-                  <div className="overflow-y-auto p-4 md:p-6 space-y-4 max-h-[55vh] md:max-h-[65vh]">
+                  <div className="overflow-y-auto p-4 md:p-6 space-y-4 pb-16 md:pb-10 max-h-[55vh] md:max-h-[65vh]">
                     {active?.sub_header ? (
                       <p className="text-gray-800">{active.sub_header}</p>
                     ) : null}

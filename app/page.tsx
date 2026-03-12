@@ -65,7 +65,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-1 md:gap-2">
                   <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-green-600 flex-shrink-0" />
                   <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
-                    Background Verified
+                    Verified
                   </span>
                 </div>
                 <div className="flex items-center gap-1 md:gap-2">
@@ -85,7 +85,7 @@ export default function HomePage() {
 
             <div className="relative bg-transparent">
               <Image
-                src="recruit-hero.png"
+                src="/recruit-hero.webp"
                 alt="Professional household staff"
                 width={400}
                 height={400}
@@ -274,7 +274,7 @@ export default function HomePage() {
 
             <div className="relative bg-transparent">
               <Image
-                src="/worker-img.png"
+                src="/worker-img.webp"
                 alt="Safety and trust"
                 width={400}
                 height={400}
