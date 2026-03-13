@@ -64,6 +64,12 @@ export function Footer() {
                   About
                 </Link>
                 <Link
+                  href="/investors"
+                  className="block text-gray-400 hover:text-white"
+                >
+                  Investors
+                </Link>
+                <Link
                   href="/terms"
                   className="block text-gray-400 hover:text-white"
                 >
