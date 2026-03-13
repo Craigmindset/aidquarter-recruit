@@ -93,7 +93,7 @@ export default function InvestorsPage() {
     <main className="min-h-screen bg-white">
       <section className="py-0">
         <div className="relative">
-          <div className="relative h-[340px] lg:h-[520px]">
+          <div className="relative h-[400px] lg:h-[520px]">
             <Image
               src="/investor-img.png"
               alt="Aidquarters investors"
@@ -104,18 +104,21 @@ export default function InvestorsPage() {
           </div>
           <div className="absolute inset-0">
             <div className="container mx-auto px-4 lg:px-6 h-full flex items-center justify-center">
-              <div className="max-w-xl text-center text-white py-10">
-                <h1 className="text-4xl lg:text-4xl font-bold mb-4">
+              <div className="max-w-xl text-center text-white py-20 md:py-10">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">
                   unlocking a multi-trillion Naira hidden economy
                 </h1>
-                <p className="text-lg text-gray-100 mb-6">
+                <p className="text-base md:text-lg text-gray-100 mb-6">
                   Nigeria’s household services sector is a ₦4 trillion invisible
                   economy. We are building the operating system that finally
                   brings this fragmented market online, capturing the flow of
                   capital from recruitment to recurring payroll.
                 </p>
-                <div className="flex gap-4 justify-center">
-                  <Button asChild className="bg-green-600 hover:bg-green-700">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
+                  <Button
+                    asChild
+                    className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+                  >
                     <a href="/pitchdeck.pdf" download>
                       Download Pitchdeck
                     </a>
@@ -123,7 +126,7 @@ export default function InvestorsPage() {
                   <Button
                     asChild
                     variant="outline"
-                    className="bg-white/90 text-gray-900 hover:bg-white"
+                    className="bg-white/90 text-gray-900 hover:bg-white w-full sm:w-auto"
                   >
                     <Link href="/contact">Contact Us</Link>
                   </Button>
@@ -135,19 +138,24 @@ export default function InvestorsPage() {
       </section>
 
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 lg:px-6">
+        <div className="container mx-auto px-6 lg:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
+            <div className="space-y-6 min-w-0">
               <h2 className="text-3xl font-bold text-gray-900">The Problem</h2>
-              <div className="space-y-5">
+              <div className="space-y-5 pr-1">
                 {problems.map((p, i) => (
-                  <div key={i} className="flex items-start gap-4">
-                    <p.icon className="h-6 w-6 text-green-600 flex-shrink-0" />
-                    <div>
-                      <div className="font-semibold text-gray-900">
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 w-full max-w-full"
+                  >
+                    <p.icon className="h-5 w-5 md:h-6 md:w-6 text-green-600 flex-shrink-0" />
+                    <div className="flex-1 min-w-0 max-w-full">
+                      <div className="font-semibold text-gray-900 text-base md:text-lg whitespace-normal break-words leading-6">
                         {p.title}
                       </div>
-                      <div className="text-gray-700">{p.desc}</div>
+                      <div className="text-gray-700 text-sm md:text-base whitespace-normal break-all sm:break-words [overflow-wrap:anywhere] leading-6">
+                        {p.desc}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -159,7 +167,7 @@ export default function InvestorsPage() {
                 alt="The problem illustration"
                 width={640}
                 height={480}
-                className="rounded-2xl md:w-full max-w-sm md:max-w-none md:mt-10"
+                className="rounded-2xl shadow-lg w-full h-auto object-cover"
               />
             </div>
           </div>
@@ -202,9 +210,23 @@ export default function InvestorsPage() {
             {markets.map((m, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+                className={`rounded-2xl p-6 shadow-sm border ${
+                  i % 3 === 0
+                    ? "bg-red-50 border-red-100"
+                    : i % 3 === 1
+                      ? "bg-green-50 border-green-100"
+                      : "bg-purple-50 border-purple-100"
+                }`}
               >
-                <m.icon className="h-8 w-8 text-green-600 mb-3" />
+                <m.icon
+                  className={`h-8 w-8 mb-3 ${
+                    i % 3 === 0
+                      ? "text-red-600"
+                      : i % 3 === 1
+                        ? "text-green-600"
+                        : "text-purple-600"
+                  }`}
+                />
                 <div className="font-semibold text-gray-900 mb-1">
                   {m.title}
                 </div>
